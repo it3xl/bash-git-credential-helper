@@ -9,16 +9,12 @@ set -euf +x -o pipefail
 # 2. Initialize behaviour.
 #$ source git-cred.sh  init  user_name_variable_name  user_password_variable_name  [repository_url]
 # (provide repository_url parameter only if you have multiple remotes in your Git-repo)
-#
-# 3. If you what to use GIT_ASKPASS approach then add a user name to a target Git-repo configuration by calling
-#$ git config credential" 
-#$ source git-cred.sh  config-username
 
 ## How it works
 # Git will call this script automatically without any parameters as
 #$ source git-cred.sh
 
-## To test call
+## A health check
 #$ source git-cred.sh
 
 # Approaches are taken from
@@ -39,14 +35,6 @@ invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 action=${1-}
 
-# Approaches are taken from
-# https://stackoverflow.com/questions/8536732/can-i-hold-git-credentials-in-environment-variables
-# https://git-scm.com/docs/gitcredentials
-#
-# Mimics Jenkins logic accordingly with (not tested yet)
-# https://github.com/jenkinsci/git-client-plugin/blob/master/src/main/java/org/jenkinsci/plugins/gitclient/CliGitAPIImpl.java#L2022
-
-
 if [[ "$action" = "init" ]]; then
 
   user_name_variable_name=${2-}
@@ -66,34 +54,18 @@ if [[ "$action" = "init" ]]; then
   is_inside_git_work_tree=1;
   git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
   if (( $is_inside_git_work_tree != 1 )); then
-    echo @ A test Git repo is created
-    git init
+    echo @ Error. You are not under a Git-repository directory tree.
+    echo @ Exit.
+    
+    exit 1001
   fi;
-
 
   echo @ Initializing custom Git credential helper.
   # Disable other credential helpers.
   #helper =
   # Register our credential helper.
-  helper = /d/!00/git/credential-foo.sh passed parameters are here
+  #helper = /d/!00/git/credential-foo.sh passed parameters are here
 
-  if (( $is_inside_git_work_tree != 1 )); then
-    echo @ The test Git repo is deleted
-    rm -rf '.git'
-  fi;
-
-elif [[ "$action" = "config-username" ]]; then
-
-elif [[ "$action" = "Username" ]]; then
-  # For testing. Used by Jenkins too.
-  echo @ Providing a user name>&2
-  echo git_cred_user_name_variable_name is $git_cred_user_name_variable_name>&2
-  echo ${!git_cred_user_name_variable_name}
-elif [[ "$action" = "Password" ]]; then
-  # For testing. Used by Jenkins too.
-  echo @ Providing a user password>&2
-  echo git_cred_user_password_variable_name is $git_cred_user_password_variable_name>&2
-  echo ${!git_cred_user_password_variable_name}
 else
   echo @ Providing a user password for Git>&2
   echo git_cred_user_password_variable_name is $git_cred_user_password_variable_name>&2
