@@ -18,14 +18,19 @@ set -euf +x -o pipefail
 # Git will call this script automatically without any parameters as
 #$ source git-cred.sh
 
-## How to test
-#
-# Get user name
-#$ source git-cred.sh Username
-#
-# Get user's password
-#$ source git-cred.sh Password
+## To test call
+#$ source git-cred.sh
 
+# Approaches are taken from
+# https://git-scm.com/docs/gitcredentials
+# https://git-scm.com/docs/api-credentials
+# https://git-scm.com/docs/git-config
+# https://git-scm.com/docs/git-credential
+# https://git-scm.com/docs/git-credential-store
+# Bash custom Git credential helper (Jenkins Pipeline): https://alanedwardes.com/blog/posts/git-username-password-environment-variables/
+# Python custom Git credential helper: https://pratz.github.io/custom-git-credential-helper
+# GIT_ASKPASS usage: https://stackoverflow.com/questions/8536732/can-i-hold-git-credentials-in-environment-variables/54888724#54888724
+# Jenkins askpass implementation. https://github.com/jenkinsci/git-client-plugin/blob/master/src/main/java/org/jenkinsci/plugins/gitclient/CliGitAPIImpl.java#L2022
 
 
 echo @@ $(basename "$BASH_SOURCE") start>&2
@@ -43,6 +48,7 @@ action=${1-}
 
 
 if [[ "$action" = "init" ]]; then
+
   user_name_variable_name=${2-}
   user_password_variable_name=${3-}
   repository_url=${4-}
@@ -57,15 +63,6 @@ if [[ "$action" = "init" ]]; then
   echo git_cred_user_password_variable_name = $git_cred_user_password_variable_name
   export git_cred_user_password_variable_name
 
-
-  echo @ Initializing GIT_ASKPASS
-  #
-  GIT_ASKPASS=$invoke_path/$BASH_SOURCE
-  export GIT_ASKPASS
-  echo GIT_ASKPASS = $GIT_ASKPASS
-  
-elif [[ "$action" = "config-username" ]]; then
-
   is_inside_git_work_tree=1;
   git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
   if (( $is_inside_git_work_tree != 1 )); then
@@ -73,14 +70,19 @@ elif [[ "$action" = "config-username" ]]; then
     git init
   fi;
 
-  echo @ Initializing a user-name in Git config
-  echo git config credential${repository_url:+.${repository_url}}.username  ${!git_cred_user_name_variable_name}
-  git config credential${repository_url:+.${repository_url}}.username  ${!git_cred_user_name_variable_name}
+
+  echo @ Initializing custom Git credential helper.
+  # Disable other credential helpers.
+  #helper =
+  # Register our credential helper.
+  helper = /d/!00/git/credential-foo.sh passed parameters are here
 
   if (( $is_inside_git_work_tree != 1 )); then
     echo @ The test Git repo is deleted
     rm -rf '.git'
   fi;
+
+elif [[ "$action" = "config-username" ]]; then
 
 elif [[ "$action" = "Username" ]]; then
   # For testing. Used by Jenkins too.
