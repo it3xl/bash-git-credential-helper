@@ -1,6 +1,6 @@
 
-user_name_var=some-your-login
-user_password_var=some-your-password
+user_name_var=some-login
+user_password_var=some-password
 
 echo ''
 echo Testing of empty Git-repo URL
