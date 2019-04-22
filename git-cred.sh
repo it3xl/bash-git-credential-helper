@@ -67,8 +67,7 @@ if [[ "$action" = "init" ]]; then
   git config credential.helper ''
   git config credential.${repo_url}.helper ''
   # Register our credential helper.
-  #helper = /d/!00/git/credential-foo.sh passed parameters are here
-  git config credential.${repo_url}.helper "$invoke_path/$BASH_SOURCE  $remote"
+  git config --add credential.${repo_url}.helper \'"$BASH_SOURCE\'  $remote"
 
 else
   echo @ Providing credentials for $remote Git remote>&2
