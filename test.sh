@@ -3,10 +3,6 @@ set -euf +x -o pipefail
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
-user_name_var=some-login
-user_password_var=some-password
-
-
 test_repo="$invoke_path/git-cred-test-repo"
 if [[ -d "$test_repo" ]]; then
   rm -rf test_repo
@@ -21,6 +17,11 @@ echo @ Creating test Git repo.
 git init
 git remote add it3xl-remote https://github.com/it3xl/bash-git-credential-helper.git
 git remote add some-remote https://example.com/my-repo.git
+
+
+git_cred_username=some-login
+git_cred_password=some-password
+
 
 git_cred="$invoke_path/git-cred.sh"
 

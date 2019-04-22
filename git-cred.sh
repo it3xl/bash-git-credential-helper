@@ -1,21 +1,89 @@
 set -euf +x -o pipefail
 
-## How to set-up everything.
+## Install
 #
-# 1. Define credential environment variables.
-#$ user_name_variable_name=some-login
-#$ user_password_variable_name=some-password
+# 1. Define credential environment variables that are suffixed with a real remote name from your Git-repository.
+#$ git_cred_username_<remote-name>=some-login
+#$ git_cred_password_<remote-name>=some-password
 #
-# 2. Initialize behaviour.
-#$ source git-cred.sh  init  user_name_variable_name  user_password_variable_name  [repository_url]
-# (provide repository_url parameter only if you have multiple remotes in your Git-repo)
+# 2. Register behaviour by calling
+#$ source <path-to>/git-cred.sh  <remote-name>  init
+
+## Usage
+#
+# Do not relocate this file after the install (otherwise reinstall it).
+#
+# Provide environment variables before any remote usage of your Git-repository (fetch, push, pull)
+#$ git_cred_username_<remote-name>=some-login
+#$ git_cred_password_<remote-name>=some-password
 
 ## How it works
-# Git will call this script automatically without any parameters as
-#$ source git-cred.sh
+#
+# Git will call git-cred.sh automatically as it will become properly configured as a credential helper for your Git-remote.
+# Just provide the above environment variables before any remote usage of your Git-repository (fetch, push, pull).
 
-## A health check
-#$ source git-cred.sh
+echo @@ $(basename "$BASH_SOURCE") start>&2
+
+invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+remote=${1-}
+[[ -z "$remote" ]] && {
+  echo @ Error. Exit. First parameter of a Git remote name is not provided.>&2
+  exit 1
+}
+
+login_var_name=git_cred_username_$remote
+[[ -z "${!login_var_name:+x}" ]] && {
+  echo @ Error. Exit. There is no data in $login_var_name env-variable.>&2
+  exit 1
+}
+
+password_var_name=git_cred_password_$remote
+[[ -z "${!password_var_name+x}" ]] && {
+  echo @ Error. Exit. There is no data in $password_var_name env-variable.>&2
+  exit 1
+}
+
+action=${2-}
+
+if [[ "$action" = "init" ]]; then
+
+  is_inside_git_work_tree=1;
+  git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
+  if (( $is_inside_git_work_tree != 1 )); then
+    echo @ Error. Exit. This script is run not inside a Git-repository directory tree.>&2
+    exit 1
+  fi;
+
+  echo @ Initializing of git-cred custom Git credential helper.>&2
+  git remote get-url $remote || {
+    echo @ Error. Exit. There is no $remote remot in your Git-repository.>&2
+    exit 1
+  }
+  
+  repo_url=$(git remote get-url $remote)
+
+  # Disable other credential helpers.
+  git config credential.helper ''
+  git config credential.${repo_url}.helper ''
+  # Register our credential helper.
+  #helper = /d/!00/git/credential-foo.sh passed parameters are here
+  git config credential.${repo_url}.helper "$invoke_path/$BASH_SOURCE  $remote"
+
+else
+  echo @ Providing credentials for $remote Git remote>&2
+
+  echo username=${!login_var_name}
+  echo password=${!password_var_name}
+fi
+
+
+
+
+echo @@ $(basename "$BASH_SOURCE") end>&2
+
+
+
 
 # Approaches are taken from
 # https://git-scm.com/docs/gitcredentials
@@ -27,64 +95,9 @@ set -euf +x -o pipefail
 # Python custom Git credential helper: https://pratz.github.io/custom-git-credential-helper
 # GIT_ASKPASS usage: https://stackoverflow.com/questions/8536732/can-i-hold-git-credentials-in-environment-variables/54888724#54888724
 # Jenkins askpass implementation. https://github.com/jenkinsci/git-client-plugin/blob/master/src/main/java/org/jenkinsci/plugins/gitclient/CliGitAPIImpl.java#L2022
-
-
-echo @@ $(basename "$BASH_SOURCE") start>&2
-
-invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-action=${1-}
-
-if [[ "$action" = "init" ]]; then
-
-  user_name_variable_name=${2-}
-  user_password_variable_name=${3-}
-  repository_url=${4-}
-
-  echo @ Remember credential variables
-  #
-  git_cred_user_name_variable_name=$user_name_variable_name
-  echo git_cred_user_name_variable_name = $git_cred_user_name_variable_name
-  export git_cred_user_name_variable_name
-  #
-  git_cred_user_password_variable_name=$user_password_variable_name
-  echo git_cred_user_password_variable_name = $git_cred_user_password_variable_name
-  export git_cred_user_password_variable_name
-
-  is_inside_git_work_tree=1;
-  git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
-  if (( $is_inside_git_work_tree != 1 )); then
-    echo @ Error. You are not under a Git-repository directory tree.
-    echo @ Exit.
-    
-    exit 1001
-  fi;
-
-  echo @ Initializing custom Git credential helper.
-  # Disable other credential helpers.
-  #helper =
-  # Register our credential helper.
-  #helper = /d/!00/git/credential-foo.sh passed parameters are here
-
-else
-  echo @ Providing a user password for Git>&2
-  echo git_cred_user_password_variable_name is $git_cred_user_password_variable_name>&2
-  echo ${!git_cred_user_password_variable_name}
-fi
-
-
-
-
-echo @@ $(basename "$BASH_SOURCE") end>&2
-
-
-
-
-
-
-
-
-
+# bash var check: https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
+# bash var check: https://www.cyberciti.biz/faq/unix-linux-bash-script-check-if-variable-is-empty/
+# bash dynamic var: https://askubuntu.com/questions/926450/how-do-i-assign-a-variable-in-bash-whose-name-is-expanded-from-another-varia
 
 
 
