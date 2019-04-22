@@ -56,11 +56,11 @@ if [[ "$action" = "init" ]]; then
   fi;
 
   echo @ Initializing of git-cred custom Git credential helper.>&2
-  git remote get-url $remote || {
+  git remote get-url $remote > /dev/null  ||  {
     echo @ Error. Exit. There is no $remote remot in your Git-repository.>&2
     exit 1
   }
-  
+
   repo_url=$(git remote get-url $remote)
 
   # Disable other credential helpers.

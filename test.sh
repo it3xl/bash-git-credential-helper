@@ -5,7 +5,7 @@ invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 test_repo="$invoke_path/git-cred-test-repo"
 if [[ -d "$test_repo" ]]; then
-  rm -rf test_repo
+  rm -rf $test_repo
 fi
 
 mkdir "$test_repo"
@@ -17,7 +17,7 @@ remote=it3xl
 
 echo @ Creating test Git repo.
 git init
-git remote add $remote https://github.com/it3xl/bash-git-credential-helper.git
+git remote add $remote https://example.com/my.git
 
 
 git_cred_username_it3xl=some-login
