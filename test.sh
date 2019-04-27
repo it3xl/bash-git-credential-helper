@@ -1,4 +1,4 @@
-set -euf +x -o pipefail
+set +e -uf +x -o pipefail
 
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -7,39 +7,39 @@ GIT_CRED_DO_NOT_EXIT=123
 
 
 
-test_repo="$invoke_path/git-cred-test-repo"
-if [[ -d "$test_repo" ]]; then
-  rm -rf $test_repo
+test_repos="$invoke_path/test"
+if [[ -d "$test_repos" ]]; then
+  rm -rf $test_repos
 fi
 
-mkdir "$test_repo"
 
-# Not git-cred requires work under a target Git-repo directory.
-cd "$test_repo"
+test_repo_remote="$test_repos/test-repo-remote-name"
+mkdir -p "$test_repo_remote"
 
-remote=it3xl
+cd "$test_repo_remote"
 
-echo @ Creating test Git repo.
-git init
-git remote add $remote https://example.com/my.git
+git init >null
+
+remote_name=origin
+git remote add $remote_name https://example.com/my.git
+
+git_cred_username_origin=some-login
+git_cred_password_origin=some-password
 
 
-git_cred_username_it3xl=some-login
-git_cred_password_it3xl=some-password
+git_cred_path="$invoke_path/git-cred.sh"
 
+# Installing git-cred as a Git credential helper.
+source "$git_cred_path"  init  $remote_name
 
-git_cred="$invoke_path/git-cred.sh"
+# Testing git-cred as a Git credential helper.
+source "$git_cred_path"  get  $remote_name  get
 
-echo ''
-echo Installing git-cred as a credential helper.
-source "$git_cred"  $remote  init
-
-echo ''
-echo Testing git-cred as a credential helper.
-source "$git_cred"  $remote
+# Testing git-cred as a Git credential helper.
+#source "$git_cred_path"  get  $remote_name 
 
 
 echo ''
 echo Everything is OK
-echo sleep...
-sleep 20s
+#echo sleep...
+#sleep 20s
