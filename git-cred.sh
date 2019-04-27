@@ -5,34 +5,96 @@ set -euf +x -o pipefail
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
+env_action_init=init
+env_action_init_no_remote=init-for-url
+env_action_get=get
+env_action_help=help
 
-function check_remote() {
-  [[ -z "$remote" ]] && {
-    echo @ Error. Exit. First parameter of a Git remote name is not provided.>&2
-    (exit 1)
-  }
-}
+env_exit_code=0
 
-function check_cred_env() {
-  login_var_name=git_cred_username_$remote
-  [[ -z "${!login_var_name:+x}" ]] && {
-    echo @ Error. Exit. There is no data in $login_var_name env-variable.>&2
-    (exit 1)
-  }
-
-  password_var_name=git_cred_password_$remote
-  [[ -z "${!password_var_name+x}" ]] && {
-    echo @ Error. Exit. There is no data in $password_var_name env-variable.>&2
-    (exit 1)
-  }
-}
 
 
 action=${1-}
 remote=${2-}
-# Let's grab an input Git's API action.
-# I's always sent as the last parameter.
+# Let's grab a Git's API action. It's always sent as the last parameter.
 git_action=${@:$#}
+
+
+
+
+function check_remote() {
+  [[ -z "$remote" ]] && {
+    echo @ Error. Exit. First parameter of a Git remote name is not provided.>&2
+    
+    return 1
+  }
+}
+
+function under_git(){
+  local is_inside_git_work_tree=1;
+  
+  git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
+  if (( $is_inside_git_work_tree != 1 )); then
+    echo @ Error. Exit. This script is run not inside a Git-repository directory tree.>&2
+    
+    return 1
+  fi;
+}
+
+function set_login_var_name() {
+  login_var_name=git_cred_username_$remote
+  [[ -z "${!login_var_name:+x}" ]] && {
+    echo @ Error. Exit. There is no data in $login_var_name env-variable.>&2
+    
+    return 1
+  }
+}
+
+function set_login_var_name_for_no_remote() {
+  login_var_name=git_cred_username
+  [[ -z "${!login_var_name:+x}" ]] && {
+    echo @ Error. Exit. There is no data in $login_var_name env-variable.>&2
+    
+    return 1
+  }
+}
+
+function set_password_var_name() {
+  password_var_name=git_cred_password_$remote
+  [[ -z "${!password_var_name+x}" ]] && {
+    echo @ Error. Exit. There is no data in $password_var_name env-variable.>&2
+
+    return 1
+  }
+}
+
+function set_password_var_name_for_no_remote() {
+  password_var_name=git_cred_password
+  [[ -z "${!password_var_name+x}" ]] && {
+    echo @ Error. Exit. There is no data in $password_var_name env-variable.>&2
+
+    return 1
+  }
+}
+
+function set_remote_url() {
+  git remote get-url $remote > /dev/null  ||  {
+    echo @ Error. Exit. There is no $remote remot in your Git-repository.>&2
+    (exit 1)
+  }
+
+  remote_url=$(git remote get-url $remote)
+}
+
+function set_remote_url_for_no_remote() {
+  git remote get-url $remote > /dev/null  ||  {
+    echo @ Error. Exit. There is no $remote remot in your Git-repository.>&2
+    (exit 1)
+  }
+
+  remote_url=$remote
+}
+
 
 
 
@@ -40,38 +102,45 @@ git_action=${@:$#}
   echo bash Git Credential Helper>&2
   echo For help type>&2
   echo ''>&2
-  echo source $(basename "$BASH_SOURCE") ' help'>&2
+  echo source $(basename "$BASH_SOURCE") ' '$env_action_help>&2
 }
 
 
-if [[ "$action" = "init" ]]; then
-
-  is_inside_git_work_tree=1;
-  git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
-  if (( $is_inside_git_work_tree != 1 )); then
-    echo @ Error. Exit. This script is run not inside a Git-repository directory tree.>&2
-    (exit 1)
-  fi;
-
+if [[ "$action" = "$env_action_init" ]]; then
+  
   echo @ Initializing of git-cred custom Git credential helper.>&2
-  git remote get-url $remote > /dev/null  ||  {
-    echo @ Error. Exit. There is no $remote remot in your Git-repository.>&2
-    (exit 1)
-  }
-
-  repo_url=$(git remote get-url $remote)
-
+  
+  under_git\
+  && set_login_var_name\
+  && set_password_var_name\
+  && set_remote_url
+  
   # Disable other credential helpers.
   git config credential.helper ''
-  git config credential.${repo_url}.helper ''
+  git config credential.${remote_url}.helper ''
   # Register our credential helper.
-  git config --add credential.${repo_url}.helper \'"$BASH_SOURCE\'  get  $remote"
-
-elif [[ "$action" = "get" ]]; then
+  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
+  
+if [[ "$action" = "$env_action_init_no_remote" ]]; then
+  
+  echo @ Initializing of git-cred custom Git credential helper.>&2
+  
+  under_git\
+  && set_login_var_name_for_no_remote\
+  && set_password_var_name_for_no_remote\
+  && set_remote_url_for_no_remote
+  
+  # Disable other credential helpers.
+  git config credential.helper ''
+  git config credential.${remote_url}.helper ''
+  # Register our credential helper.
+  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
+  
+elif [[ "$action" = "$env_action_get" ]]; then
 
   [[ "$git_action" = "get" ]] && {
     echo @ Providing credentials for $remote Git remote>&2
-
+    
     echo username=${!login_var_name}
     echo password=${!password_var_name}
     
@@ -79,10 +148,10 @@ elif [[ "$action" = "get" ]]; then
   }
 
   # For the store and the erase Git API commands.
-  echo Ignoring Git action '"'$git_action'"'>&2
-
+  echo Ignoring of Git action '"'$git_action'"'>&2
+  
 elif [[ "$action" = "help" ]]; then
-
+  
   echo ''
   echo @ Installation.
   echo ''
@@ -97,7 +166,7 @@ elif [[ "$action" = "help" ]]; then
   echo '$ git_cred_password_<remote-name>=some-password'
   echo ''
   echo 2.2. Register behaviour by calling
-  echo '$ source <path-to>'/$(basename "$BASH_SOURCE")'  init  <remote-name>'
+  echo '$ source <path-to>'/$(basename "$BASH_SOURCE")'  '$env_action_init'  <remote-name>'
   echo ''
   echo @ 3. for an URL '(your local Git-repo has no a registered remote name)'.
   echo ''
@@ -107,7 +176,7 @@ elif [[ "$action" = "help" ]]; then
   echo '$ git_cred_password=some-password'
   echo ''
   echo 3.2. Register behaviour by calling
-  echo '$ source <path-to>/'$(basename "$BASH_SOURCE")'  init-for-url <remote-Git-repo-url>'
+  echo '$ source <path-to>/'$(basename "$BASH_SOURCE")'  '$env_action_init_no_remote' <remote-Git-repo-url>'
   echo ''
   echo @ Usage
   echo 1. Do not relocate this file after the installation
@@ -122,7 +191,7 @@ elif [[ "$action" = "help" ]]; then
   echo '   properly configured as a credential helper for your Git-remote.'
   echo *. Just provide the above environment variables before any
   echo '   remote usage of your Git-repository (fetch, push, pull).'
-
+  
 else
   
   true
