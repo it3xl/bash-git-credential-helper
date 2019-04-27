@@ -6,7 +6,6 @@ invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
 
-
 function check_remote() {
   [[ -z "$remote" ]] && {
     echo @ Error. Exit. First parameter of a Git remote name is not provided.>&2
@@ -45,10 +44,6 @@ git_action=${@:$#}
 }
 
 
-
-
-
-
 if [[ "$action" = "init" ]]; then
 
   is_inside_git_work_tree=1;
@@ -74,35 +69,44 @@ if [[ "$action" = "init" ]]; then
 
 elif [[ "$action" = "get" ]]; then
 
-  
   [[ "$git_action" = "get" ]] && {
     echo @ Providing credentials for $remote Git remote>&2
 
     echo username=${!login_var_name}
     echo password=${!password_var_name}
+    
+    exit 0
   }
+
+  # For the store and the erase Git API commands.
+  echo Ignoring Git action '"'$git_action'"'>&2
 
 elif [[ "$action" = "help" ]]; then
 
   echo ''
-  echo @ 1. Installion for a remote name.
+  echo @ Installation.
   echo ''
-  echo 1.1. Define credential environment variables that are suffixed
+  echo @ 1. Change the shell working directory to your local Git-repository.
+  echo '$ cd  <path-to-your-local-Git-Repo>'
+  echo ''
+  echo @ 2. for a remote name.
+  echo ''
+  echo 2.1. Define credential environment variables that are suffixed
   echo ' with a real remote name from your local Git-repository.'
   echo '$ git_cred_username_<remote-name>=some-login'
   echo '$ git_cred_password_<remote-name>=some-password'
   echo ''
-  echo 1.2. Register behaviour by calling
+  echo 2.2. Register behaviour by calling
   echo '$ source <path-to>'/$(basename "$BASH_SOURCE")'  init  <remote-name>'
   echo ''
-  echo @ 2. Installion for an URL '(your local Git-repo has no a registered remote name)'.
+  echo @ 3. for an URL '(your local Git-repo has no a registered remote name)'.
   echo ''
-  echo 2.1. Define credential environment variables that are suffixed
+  echo 3.1. Define credential environment variables that are suffixed
   echo ' with a real remote name from your Git-repository.'
   echo '$ git_cred_username=some-login'
   echo '$ git_cred_password=some-password'
   echo ''
-  echo 2.2. Register behaviour by calling
+  echo 3.2. Register behaviour by calling
   echo '$ source <path-to>/'$(basename "$BASH_SOURCE")'  init-for-url <remote-Git-repo-url>'
   echo ''
   echo @ Usage
