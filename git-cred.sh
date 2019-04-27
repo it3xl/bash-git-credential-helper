@@ -107,7 +107,17 @@ function register_git_helper_for_no_remote() {
 }
 
 function fail() {
-  GIT_CRED_DO_NOT_EXIT
+  [[ "$env_exit_code" == "0" ]] && {
+    return
+  }
+  
+  [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]] && {
+    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT
+    
+    return
+  }
+  
+  exit $env_exit_code
 }
 
 
@@ -227,7 +237,7 @@ fi
 # bash var check: https://www.cyberciti.biz/faq/unix-linux-bash-script-check-if-variable-is-empty/
 # bash test: https://ss64.com/bash/test.html
 # bash dynamic var: https://askubuntu.com/questions/926450/how-do-i-assign-a-variable-in-bash-whose-name-is-expanded-from-another-varia
-
+# bash parameter substitution: https://www.tldp.org/LDP/abs/html/parameter-substitution.html
 
 
 

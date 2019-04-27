@@ -3,6 +3,10 @@ set -euf +x -o pipefail
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
+GIT_CRED_DO_NOT_EXIT=123
+
+
+
 test_repo="$invoke_path/git-cred-test-repo"
 if [[ -d "$test_repo" ]]; then
   rm -rf $test_repo
