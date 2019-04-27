@@ -6,11 +6,10 @@ script_name=$(basename "$BASH_SOURCE")
 #echo @@ $script_name start>&2
 
 env_action_init=init
-env_action_init_no_remote=init-for-url
+env_action_init_by_url=init-by-url
 env_action_get=get
+env_action_get_by_url=get-by-url
 env_action_help=help
-
-env_exit_code=0
 
 
 action=${1-}
@@ -19,6 +18,15 @@ remote=${2-}
 git_action=${@:$#}
 
 
+
+function echo_intro(){
+  echo ''>&2
+  echo '  bash Git Credential Helper - https://github.com/it3xl/bash-git-credential-helper'>&2
+  echo ''>&2
+  echo '  For help type'>&2
+  echo ''>&2
+  echo '  source '$script_name'  '$env_action_help>&2
+}
 
 function echo_installing(){
   echo @ Installing of $script_name as a Git credential helper.>&2
@@ -105,29 +113,18 @@ function register_git_helper_for_no_remote() {
 }
 
 function fail() {
-  if [[ "$env_exit_code" == "0" ]]; then
-    return
-  fi
-  
   if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
-    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT
+    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
     
     return
   fi
   
-  exit $env_exit_code
+  exit 1001
 }
 
 
 if [[ -z "$action" ]]; then
-  
-  echo ''
-  echo '  bash Git Credential Helper - https://github.com/it3xl/bash-git-credential-helper'>&2
-  echo ''
-  echo '  For help type'>&2
-  echo ''>&2
-  echo '  source '$script_name'  '$env_action_help>&2
-  
+  echo_intro
 elif [[ "$action" = "$env_action_init" ]]; then
   echo_installing \
   && under_git \
@@ -140,8 +137,7 @@ elif [[ "$action" = "$env_action_init" ]]; then
   && disable_other_git_helpers \
   && register_git_helper \
   || fail
-  
-elif [[ "$action" = "$env_action_init_no_remote" ]]; then
+elif [[ "$action" = "$env_action_init_by_url" ]]; then
   echo_installing \
   &&under_git \
   && set_login_var_name_for_no_remote \
@@ -153,15 +149,17 @@ elif [[ "$action" = "$env_action_init_no_remote" ]]; then
   && disable_other_git_helpers \
   && register_git_helper_for_no_remote \
   || fail
-  
 elif [[ "$action" = "$env_action_get" ]]; then
-
   if [[ "$git_action" = "get" ]]; then
     echo @ Providing credentials for Git from $script_name>&2
     
     under_git \
     && set_login_var_name \
+    && check_has_login \
     && set_password_var_name \
+    && check_has_password \
+    && check_remote \
+    && set_remote_url \
     || fail
     
     echo username=${!login_var_name}
@@ -170,9 +168,26 @@ elif [[ "$action" = "$env_action_get" ]]; then
     # For the store and the erase Git API commands.
     echo @ Ignoring of Git action '"'$git_action'"'>&2
   fi
-  
+elif [[ "$action" = "$env_action_get_by_url" ]]; then
+  if [[ "$git_action" = "get" ]]; then
+    echo @ Providing credentials for Git from $script_name>&2
+    
+    under_git \
+    && set_login_var_name_for_no_remote \
+    && check_has_login \
+    && set_password_var_name_for_no_remote \
+    && check_has_password \
+    && check_remote \
+    && set_remote_url_for_no_remote \
+    || fail
+    
+    echo username=${!login_var_name}
+    echo password=${!password_var_name}
+  else
+    # For the store and the erase Git API commands.
+    echo @ Ignoring of Git action '"'$git_action'"'>&2
+  fi
 elif [[ "$action" = "help" ]]; then
-  
   echo ''
   echo @ Installation.
   echo ''
@@ -196,7 +211,7 @@ elif [[ "$action" = "help" ]]; then
   echo ' $ git_cred_password=some-password'
   echo ''
   echo 3.2. Register behaviour by calling
-  echo ' $ source <path-to>/'$script_name'  '$env_action_init_no_remote' <remote-Git-repo-url>'
+  echo ' $ source <path-to>/'$script_name'  '$env_action_init_by_url' <remote-Git-repo-url>'
   echo ''
   echo @ Usage
   echo 1. Do not relocate this file after the installation
@@ -216,17 +231,10 @@ elif [[ "$action" = "help" ]]; then
   echo '   properly configured as a credential helper for your Git-remote.'
   echo *. Just provide the above environment variables before any
   echo '   remote usage of your Git-repository (fetch, push, pull).'
-  
 fi
 
 
-
-
 #echo @@ $script_name end>&2
-
-
-
-
 
 
 
