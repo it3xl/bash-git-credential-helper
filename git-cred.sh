@@ -93,6 +93,24 @@ function set_remote_url_for_no_remote() {
 }
 
 
+function disable_other_git_helpers() {
+  git config credential.helper ''
+  git config credential.${remote_url}.helper ''
+}
+
+function register_git_helper() {
+  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
+}
+
+function register_git_helper_for_no_remote() {
+  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get"
+}
+
+function fail() {
+  GIT_CRED_DO_NOT_EXIT
+}
+
+
 if [[ -z "$action" ]]; then
   
   echo bash Git Credential Helper>&2
@@ -108,13 +126,10 @@ elif [[ "$action" = "$env_action_init" ]]; then
   && set_login_var_name \
   && set_password_var_name \
   && check_remote \
-  && set_remote_url
-  
-  # Disable other credential helpers.
-  git config credential.helper ''
-  git config credential.${remote_url}.helper ''
-  # Register our credential helper.
-  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
+  && set_remote_url \
+  && disable_other_git_helpers \
+  && register_git_helper
+  || fail
   
 elif [[ "$action" = "$env_action_init_no_remote" ]]; then
   
@@ -124,13 +139,10 @@ elif [[ "$action" = "$env_action_init_no_remote" ]]; then
   && set_login_var_name_for_no_remote \
   && set_password_var_name_for_no_remote \
   && check_remote \
-  && set_remote_url_for_no_remote
-  
-  # Disable other credential helpers.
-  git config credential.helper ''
-  git config credential.${remote_url}.helper ''
-  # Register our credential helper.
-  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
+  && set_remote_url_for_no_remote \
+  && disable_other_git_helpers \
+  && register_git_helper_for_no_remote \
+  || fail
   
 elif [[ "$action" = "$env_action_get" ]]; then
 
