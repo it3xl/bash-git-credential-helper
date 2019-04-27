@@ -123,10 +123,12 @@ function fail() {
 
 if [[ -z "$action" ]]; then
   
-  echo bash Git Credential Helper>&2
-  echo For help type>&2
+  echo ''
+  echo '  bash Git Credential Helper - https://github.com/it3xl/bash-git-credential-helper'>&2
+  echo ''
+  echo '  For help type'>&2
   echo ''>&2
-  echo source $(basename "$BASH_SOURCE") ' '$env_action_help>&2
+  echo '  source '$(basename "$BASH_SOURCE")'  '$env_action_help>&2
   
 elif [[ "$action" = "$env_action_init" ]]; then
   
@@ -138,7 +140,7 @@ elif [[ "$action" = "$env_action_init" ]]; then
   && check_remote \
   && set_remote_url \
   && disable_other_git_helpers \
-  && register_git_helper
+  && register_git_helper \
   || fail
   
 elif [[ "$action" = "$env_action_init_no_remote" ]]; then
@@ -173,36 +175,40 @@ elif [[ "$action" = "help" ]]; then
   echo ''
   echo @ Installation.
   echo ''
-  echo @ 1. Change the shell working directory to your local Git-repository.
-  echo '$ cd  <path-to-your-local-Git-Repo>'
+  echo 1. Change the shell working directory to your local Git-repository.
+  echo ' $ cd  <path-to-your-local-Git-Repo>'
   echo ''
-  echo @ 2. for a remote name.
+  echo 2. for a remote name.
   echo ''
-  echo 2.1. Define credential environment variables that are suffixed
-  echo ' with a real remote name from your local Git-repository.'
-  echo '$ git_cred_username_<remote-name>=some-login'
-  echo '$ git_cred_password_<remote-name>=some-password'
+  echo 2.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.
+  echo ' $ git_cred_username_<remote-name>=some-login'
+  echo ' $ git_cred_password_<remote-name>=some-password'
   echo ''
   echo 2.2. Register behaviour by calling
-  echo '$ source <path-to>'/$(basename "$BASH_SOURCE")'  '$env_action_init'  <remote-name>'
+  echo ' $ source <path-to>'/$(basename "$BASH_SOURCE")'  '$env_action_init'  <remote-name>'
   echo ''
-  echo @ 3. for an URL '(your local Git-repo has no a registered remote name)'.
+  echo 3. for an URL '(your local Git-repo has no a registered remote name)'.
   echo ''
   echo 3.1. Define credential environment variables that are suffixed
-  echo ' with a real remote name from your Git-repository.'
-  echo '$ git_cred_username=some-login'
-  echo '$ git_cred_password=some-password'
+  echo '    with a real remote name from your Git-repository.'
+  echo ' $ git_cred_username=some-login'
+  echo ' $ git_cred_password=some-password'
   echo ''
   echo 3.2. Register behaviour by calling
-  echo '$ source <path-to>/'$(basename "$BASH_SOURCE")'  '$env_action_init_no_remote' <remote-Git-repo-url>'
+  echo ' $ source <path-to>/'$(basename "$BASH_SOURCE")'  '$env_action_init_no_remote' <remote-Git-repo-url>'
   echo ''
   echo @ Usage
   echo 1. Do not relocate this file after the installation
   echo '   (otherwise repeat installation instructions).'
-  echo 2. Provide the above described environment variables before any
-  echo '   git fetch, push, pull. I.e. before remote Git operations.'
+  echo 2. Provide the credential environment variables once before a remote Git usage.
+  echo '   git fetch, push, pull, etc.'
   echo 3. For use in Jenkins. Use Credentials Binding Plugin '(or others)'
   echo '   to obtain credentials and hide them from any logging.'
+  echo ''
+  echo @ Sample and Getting Started
+  echo Call test.sh to create confugured example repositories
+  echo ' $ ./test.sh'
+  echo See the code in test.sh to get started.
   echo ''
   echo @ How it works
   echo *. Git will call $(basename "$BASH_SOURCE") automatically as it will become
