@@ -14,6 +14,7 @@ env_action_help=help
 
 action=${1-}
 remote=${2-}
+remote_escaped=${remote//-/_}
 # Let's grab a Git's API action. It's always sent as the last parameter.
 git_action=${@:$#}
 
@@ -45,7 +46,7 @@ function under_git(){
 }
 
 function set_login_var_name() {
-  login_var_name=git_cred_username_$remote
+  login_var_name=git_cred_username_$remote_escaped
 }
 
 function set_login_var_name_by_url() {
@@ -61,7 +62,7 @@ function check_has_login() {
 }
 
 function set_password_var_name() {
-  password_var_name=git_cred_password_$remote
+  password_var_name=git_cred_password_$remote_escaped
 }
 
 function set_password_var_name_by_url() {
@@ -197,6 +198,7 @@ elif [[ "$action" = "help" ]]; then
   echo 2. for a remote name.
   echo ''
   echo 2.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.
+  echo '    In this variable names you must replace any dash with an underscore in <remote-name>.'
   echo ' $ git_cred_username_<remote-name>=some-login'
   echo ' $ git_cred_password_<remote-name>=some-password'
   echo ''
