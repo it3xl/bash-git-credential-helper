@@ -35,8 +35,14 @@ source "$git_cred_path"  init  $remote_name
 # Testing git-cred as a Git credential helper.
 source "$git_cred_path"  get  $remote_name  get
 
-# Testing git-cred as a Git credential helper.
-#source "$git_cred_path"  get  $remote_name 
+# Ignoring of the store action of Git helper API.
+source "$git_cred_path"  get  $remote_name  store
+
+# Ignoring of the erase action of Git helper API.
+source "$git_cred_path"  get  $remote_name erase
+
+# Ignoring of an empty action of Git helper API.
+source "$git_cred_path"  get  $remote_name 
 
 
 echo ''

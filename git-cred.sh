@@ -168,7 +168,7 @@ elif [[ "$action" = "$env_action_get" ]]; then
     echo password=${!password_var_name}
   else
     # For the store and the erase Git API commands.
-    echo Ignoring of Git action '"'$git_action'"'>&2
+    echo @ Ignoring of Git action '"'$git_action'"'>&2
   fi
   
 elif [[ "$action" = "help" ]]; then
