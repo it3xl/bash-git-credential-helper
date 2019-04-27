@@ -22,20 +22,13 @@ git_action=${@:$#}
 
 
 
-function check_remote() {
-  [[ -z "$remote" ]] && {
-    echo @ Error. Exit. First parameter of a Git remote name is not provided.>&2
-    
-    return 1
-  }
-}
-
 function under_git(){
   local is_inside_git_work_tree=1;
   
   git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
+  
   if (( $is_inside_git_work_tree != 1 )); then
-    echo @ Error. Exit. This script is run not inside a Git-repository directory tree.>&2
+    echo @ Error. This script is run not inside a Git-repository directory tree.>&2
     
     return 1
   fi;
@@ -44,7 +37,7 @@ function under_git(){
 function set_login_var_name() {
   login_var_name=git_cred_username_$remote
   [[ -z "${!login_var_name:+x}" ]] && {
-    echo @ Error. Exit. There is no data in $login_var_name env-variable.>&2
+    echo @ Error. There is no data in $login_var_name env-variable.>&2
     
     return 1
   }
@@ -53,7 +46,7 @@ function set_login_var_name() {
 function set_login_var_name_for_no_remote() {
   login_var_name=git_cred_username
   [[ -z "${!login_var_name:+x}" ]] && {
-    echo @ Error. Exit. There is no data in $login_var_name env-variable.>&2
+    echo @ Error. There is no data in $login_var_name env-variable.>&2
     
     return 1
   }
@@ -62,7 +55,7 @@ function set_login_var_name_for_no_remote() {
 function set_password_var_name() {
   password_var_name=git_cred_password_$remote
   [[ -z "${!password_var_name+x}" ]] && {
-    echo @ Error. Exit. There is no data in $password_var_name env-variable.>&2
+    echo @ Error. There is no data in $password_var_name env-variable.>&2
 
     return 1
   }
@@ -71,48 +64,50 @@ function set_password_var_name() {
 function set_password_var_name_for_no_remote() {
   password_var_name=git_cred_password
   [[ -z "${!password_var_name+x}" ]] && {
-    echo @ Error. Exit. There is no data in $password_var_name env-variable.>&2
+    echo @ Error. There is no data in $password_var_name env-variable.>&2
 
+    return 1
+  }
+}
+
+function check_remote() {
+  [[ -z "$remote" ]] && {
+    echo @ Error. First parameter of a Git remote name is not provided.>&2
+    
     return 1
   }
 }
 
 function set_remote_url() {
   git remote get-url $remote > /dev/null  ||  {
-    echo @ Error. Exit. There is no $remote remot in your Git-repository.>&2
-    (exit 1)
+    echo @ Error. There is no $remote remot in your Git-repository.>&2
+
+    return 1
   }
 
   remote_url=$(git remote get-url $remote)
 }
 
 function set_remote_url_for_no_remote() {
-  git remote get-url $remote > /dev/null  ||  {
-    echo @ Error. Exit. There is no $remote remot in your Git-repository.>&2
-    (exit 1)
-  }
-
   remote_url=$remote
 }
 
 
-
-
-[[ -z "$action" ]] && {
+if [[ -z "$action" ]]; then
+  
   echo bash Git Credential Helper>&2
   echo For help type>&2
   echo ''>&2
   echo source $(basename "$BASH_SOURCE") ' '$env_action_help>&2
-}
-
-
-if [[ "$action" = "$env_action_init" ]]; then
+  
+elif [[ "$action" = "$env_action_init" ]]; then
   
   echo @ Initializing of git-cred custom Git credential helper.>&2
   
-  under_git\
-  && set_login_var_name\
-  && set_password_var_name\
+  under_git \
+  && set_login_var_name \
+  && set_password_var_name \
+  && check_remote \
   && set_remote_url
   
   # Disable other credential helpers.
@@ -121,13 +116,14 @@ if [[ "$action" = "$env_action_init" ]]; then
   # Register our credential helper.
   git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
   
-if [[ "$action" = "$env_action_init_no_remote" ]]; then
+elif [[ "$action" = "$env_action_init_no_remote" ]]; then
   
   echo @ Initializing of git-cred custom Git credential helper.>&2
   
-  under_git\
-  && set_login_var_name_for_no_remote\
-  && set_password_var_name_for_no_remote\
+  under_git \
+  && set_login_var_name_for_no_remote \
+  && set_password_var_name_for_no_remote \
+  && check_remote \
   && set_remote_url_for_no_remote
   
   # Disable other credential helpers.
@@ -191,10 +187,6 @@ elif [[ "$action" = "help" ]]; then
   echo '   properly configured as a credential helper for your Git-remote.'
   echo *. Just provide the above environment variables before any
   echo '   remote usage of your Git-repository (fetch, push, pull).'
-  
-else
-  
-  true
   
 fi
 
