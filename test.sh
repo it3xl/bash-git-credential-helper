@@ -1,38 +1,12 @@
+tput reset
 set -e -uf +x -o pipefail
 
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+echo '$ '$(basename "$BASH_SOURCE")
+
 
 git_cred_path="$invoke_path/git-cred.sh"
-
-
-echo @ Testing the intro
-echo ======================================================================
-source "$git_cred_path">/dev/null
-echo --Accepted------------------------------------------------------------
-
-echo ''
-echo @ Testing the help
-echo ======================================================================
-source "$git_cred_path"  help>/dev/null
-echo --Accepted------------------------------------------------------------
-
-echo ''
-echo @ Testing the fail method for init
-echo ======================================================================
-GIT_CRED_DO_NOT_EXIT=123
-source "$git_cred_path"  init
-GIT_CRED_DO_NOT_EXIT=
-echo --Accepted------------------------------------------------------------
-
-echo ''
-echo @ Testing the fail method for init-by-url
-echo ======================================================================
-GIT_CRED_DO_NOT_EXIT=123
-source "$git_cred_path"  init-by-url
-GIT_CRED_DO_NOT_EXIT=
-echo --Accepted------------------------------------------------------------
-
 
 # Clears previous tests.
 test_repos="$invoke_path/test"
@@ -41,7 +15,7 @@ if [[ -d "$test_repos" ]]; then
 fi
 
 echo ''
-echo @ Testing a repo with a remote name
+echo @ Testing a remote name usage
 echo ======================================================================
 
 test_repo_remote="$test_repos/test-repo-remote-name"
@@ -77,7 +51,7 @@ source "$git_cred_path"  get  $remote_name
 echo --Accepted------------------------------------------------------------
 
 echo ''
-echo @ Testing a repo without a remote name
+echo @ Testing a remote URL usage
 echo ======================================================================
 
 test_repo_url="$test_repos/test-repo-without-remote-name"
