@@ -18,7 +18,7 @@ echo ''
 echo @ Testing a remote name usage
 echo ======================================================================
 
-test_repo_remote="$test_repos/test-repo-remote-name"
+test_repo_remote="$test_repos/repo-with-remote-name"
 mkdir -p "$test_repo_remote"
 
 cd "$test_repo_remote"

@@ -48,7 +48,7 @@ function set_login_var_name() {
   login_var_name=git_cred_username_$remote
 }
 
-function set_login_var_name_for_no_remote() {
+function set_login_var_name_by_url() {
   login_var_name=git_cred_username
 }
 
@@ -64,7 +64,7 @@ function set_password_var_name() {
   password_var_name=git_cred_password_$remote
 }
 
-function set_password_var_name_for_no_remote() {
+function set_password_var_name_by_url() {
   password_var_name=git_cred_password
 }
 
@@ -94,7 +94,7 @@ function set_remote_url() {
   remote_url=$(git remote get-url $remote)
 }
 
-function set_remote_url_for_no_remote() {
+function set_remote_url_by_url() {
   remote_url=$remote
 }
 
@@ -108,7 +108,7 @@ function register_git_helper() {
   git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
 }
 
-function register_git_helper_for_no_remote() {
+function register_git_helper_by_url() {
   git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get"
 }
 
@@ -140,14 +140,14 @@ elif [[ "$action" = "$env_action_init" ]]; then
 elif [[ "$action" = "$env_action_init_by_url" ]]; then
   echo_installing \
   &&under_git \
-  && set_login_var_name_for_no_remote \
+  && set_login_var_name_by_url \
   && check_has_login \
-  && set_password_var_name_for_no_remote \
+  && set_password_var_name_by_url \
   && check_has_password \
   && check_remote \
-  && set_remote_url_for_no_remote \
+  && set_remote_url_by_url \
   && disable_other_git_helpers \
-  && register_git_helper_for_no_remote \
+  && register_git_helper_by_url \
   || fail
 elif [[ "$action" = "$env_action_get" ]]; then
   if [[ "$git_action" = "get" ]]; then
@@ -173,12 +173,12 @@ elif [[ "$action" = "$env_action_get_by_url" ]]; then
     echo @ Providing credentials for Git from $script_name>&2
     
     under_git \
-    && set_login_var_name_for_no_remote \
+    && set_login_var_name_by_url \
     && check_has_login \
-    && set_password_var_name_for_no_remote \
+    && set_password_var_name_by_url \
     && check_has_password \
     && check_remote \
-    && set_remote_url_for_no_remote \
+    && set_remote_url_by_url \
     || fail
     
     echo username=${!login_var_name}
