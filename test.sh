@@ -13,6 +13,7 @@ test_repos="$invoke_path/test"
 if [[ -d "$test_repos" ]]; then
   rm -rf $test_repos
 fi
+mkdir -p "$test_repos"
 
 echo ''
 echo @ Testing a remote name usage
