@@ -1,11 +1,9 @@
 # bash Git Credential Helper
 File [git-cred.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/git-cred.sh) implements
 * a custom Git Credential Helper that is, Git Credential Store.
-* using of credential information from environment variables
+* It converts user credentials from environment variables and puts them to Git as a custom Git Credential Helper.
 * It supports spaces in paths
 * Use Credentials Binding Plugin (or others) in Jenkins to obtain credentials and hide them from any logging.
-
-It converts user credentials from environment variables and puts them to Git as a custom Git Credential Helper.
 
 ### Prepare Environment
 
