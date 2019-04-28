@@ -5,12 +5,32 @@ File git-cred.sh implements
 
 It converts user credentials from environment variables and puts them to Git as a custom Git Credential Helper.
 
+### Prepare Environment
+
+Use any \*nix or Window machine.  
+Install Git  
+
+#### Usage from Windows CMD
+
+For an URL
+
+    bash "/c/Jenkins/Your bash git credentila helper/location/git-cred.sh"  init-by-rul  https:/example.com/my.repo.git
+
+For a remote name
+
+    bash "/c/Jenkins/Your bash git credentila helper/location/git-cred.sh"  init  origin
+
+### Instructions
 
 To get the latest instructions type in a bash shell
 
     source git-cred.sh  help
+    
+In a Windows shell type
 
- Output from this command
+    bash git-cred.sh help
+
+ #### Output from this command
 
 @ Installation.
 
