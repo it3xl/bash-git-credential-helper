@@ -34,44 +34,48 @@ In a Windows shell type
 
 @ Installation.
 
-1. Change the shell working directory to your local Git-repository.
- $ cd  <path-to-your-local-Git-Repo>
+1\. Change the shell working directory to your local Git-repository.
 
-2. for a remote name.
+    cd path-to-your-local-Git-Repo
 
-2.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.
-    In this variable names you must replace any dash with an underscore in <remote-name>.
- $ git_cred_username_<remote-name>=some-login
- $ git_cred_password_<remote-name>=some-password
+2\. for a remote name.
+
+2\.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.  
+In this variable names you must replace any dash with an underscore in <remote-name>.
+
+    git_cred_username_<remote-name>=some-login
+    git_cred_password_<remote-name>=some-password
 
 2.2. Register behaviour by calling
- $ source <path-to>/git-cred.sh  init  <remote-name>
+
+    source <path-to>/git-cred.sh  init  <remote-name>
 
 3. for an URL (your local Git-repo has no a registered remote name).
 
-3.1. Define credential environment variables that are suffixed
-    with a real remote name from your Git-repository.
- $ git_cred_username=some-login
- $ git_cred_password=some-password
+3.1. Define credential environment variables that are suffixed with a real remote name from your Git-repository.
+
+    git_cred_username=some-login
+    git_cred_password=some-password
 
 3.2. Register behaviour by calling
- $ source <path-to>/git-cred.sh  init-by-url <remote-Git-repo-url>
+
+    source <path-to>/git-cred.sh  init-by-url <remote-Git-repo-url>
 
 @ Usage
-1. Do not relocate this file after the installation
+1\. Do not relocate this file after the installation
    (otherwise repeat installation instructions).
-2. Provide the credential environment variables once before a remote Git usage.
+2\. Provide the credential environment variables once before a remote Git usage.
    git fetch, push, pull, etc.
-3. For use in Jenkins. Use Credentials Binding Plugin (or others)
+3\. For use in Jenkins. Use Credentials Binding Plugin (or others)
    to obtain credentials and hide them from any logging.
 
 @ Sample and Getting Started
 Call test.sh to create confugured example repositories
- $ ./test.sh
+
+    ./test.sh
+
 See the code in test.sh to get started.
 
-@ How it works
-*. Git will call git-cred.sh automatically as it will become
-   properly configured as a credential helper for your Git-remote.
-*. Just provide the above environment variables before any
-   remote usage of your Git-repository (fetch, push, pull).
+@ How it works  
+*. Git will call git-cred.sh automatically as it will become properly configured as a credential helper for your Git-remote.  
+*. Just provide the above environment variables before any remote usage of your Git-repository (fetch, push, pull).
