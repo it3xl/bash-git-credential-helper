@@ -63,11 +63,11 @@ In a Windows shell type
 
 @ Usage  
 1\. Do not relocate this file after the installation (otherwise repeat installation instructions).  
-2\. Provide the credential environment variables once before a remote Git usage (git fetch, push, pull, etc).
+2\. Provide the credential environment variables once before a remote Git usage (git fetch, push, pull, etc).  
 3\. For use in Jenkins. Use Credentials Binding Plugin (or others) to obtain credentials and hide them from any logging.
 
 @ Sample and Getting Started  
-Call test.sh to create confugured example repositories
+Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/test.sh) to create confugured example repositories
 
     ./test.sh
 
