@@ -6,20 +6,26 @@ invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo '$ '$(basename "$BASH_SOURCE")
 
 
-git_cred_path="$invoke_path/git-cred.sh"
 
-# Clears previous tests.
-test_repos="$invoke_path/test"
+# Clean ups previous tests.
+test_repos="$invoke_path/te st"
 if [[ -d "$test_repos" ]]; then
-  rm -rf $test_repos
+  rm -rf "$test_repos"
 fi
 mkdir -p "$test_repos"
+
+git_cred_source="$invoke_path/git-cred.sh"
+git_cred_dir="$test_repos/git cred"
+mkdir -p "$git_cred_dir"
+git_cred_path="$git_cred_dir/git-cred.sh"
+
+cp -f  "$git_cred_source"  "$git_cred_path"
 
 echo ''
 echo @ Testing a remote name usage
 echo ======================================================================
 
-test_repo_remote="$test_repos/repo-with-remote-name"
+test_repo_remote="$test_repos/repo with remote name"
 mkdir -p "$test_repo_remote"
 
 cd "$test_repo_remote"
@@ -87,7 +93,7 @@ echo ''
 echo @ Testing a remote URL usage
 echo ======================================================================
 
-test_repo_url="$test_repos/test-repo-without-remote-name"
+test_repo_url="$test_repos/test repo without remote name"
 mkdir -p "$test_repo_url"
 
 cd "$test_repo_url"
