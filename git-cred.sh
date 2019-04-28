@@ -154,7 +154,7 @@ elif [[ "$action" = "$env_action_init_by_url" ]]; then
   || fail
 elif [[ "$action" = "$env_action_get" ]]; then
   if [[ "$git_action" = "get" ]]; then
-    echo @ $script_name Providing credentials for Git from $script_name>&2
+    echo @ $script_name Providing credentials for Git>&2
     
     under_git \
     && set_login_var_name \
