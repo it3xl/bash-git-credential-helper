@@ -12,9 +12,9 @@ Install Git
 
 #### Usage from Windows CMD
 
-For an URL
+For a remote Git-repo URL
 
-    bash "/c/Jenkins/Your bash git credentila helper/location/git-cred.sh"  init-by-rul  https:/example.com/my.repo.git
+    bash "/c/Jenkins/bash git credentila helper/git-cred.sh"  init-by-rul  https:/example.com/my.repo.git
 
 For a remote name
 
@@ -30,18 +30,18 @@ In a Windows shell type
 
     bash git-cred.sh  help
 
- #### Output from this command
+ **An output from this command**
 
 @ Installation.
 
 1\. Change the shell working directory to your local Git-repository.
 
-    cd path-to-your-local-Git-Repo
+    cd  <path-to-your-local-Git-Repo>
 
 2\. for a remote name.
 
 2\.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.  
-In this variable names you must replace any dash with an underscore in <remote-name>.
+**In this variable names you must replace any dash with an underscore in \<remote-name\>.**
 
     git_cred_username_<remote-name>=some-login
     git_cred_password_<remote-name>=some-password
@@ -50,14 +50,14 @@ In this variable names you must replace any dash with an underscore in <remote-n
 
     source <path-to>/git-cred.sh  init  <remote-name>
 
-3. for an URL (your local Git-repo has no a registered remote name).
+3\. for an URL (your local Git-repo has no a registered remote name).
 
-3.1. Define credential environment variables that are suffixed with a real remote name from your Git-repository.
+3\.1. Define credential environment variables that are suffixed with a real remote name from your Git-repository.
 
     git_cred_username=some-login
     git_cred_password=some-password
 
-3.2. Register behaviour by calling
+3\.2. Register behaviour by calling
 
     source <path-to>/git-cred.sh  init-by-url <remote-Git-repo-url>
 
