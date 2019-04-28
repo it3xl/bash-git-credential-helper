@@ -101,18 +101,18 @@ function set_remote_url_by_url() {
 
 
 function disable_other_git_helpers() {
-  git config credential.helper ''
-  #git config credential.${remote_url}.helper ''
+  git config --local credential.helper ''
+  #git config --local credential.${remote_url}.helper ''
 }
 
 function register_git_helper() {
   shell_snippet="!'${BASH_SOURCE}'  get  $remote"
-  git config --add credential.${remote_url}.helper  "$shell_snippet"
+  git config --local --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
 function register_git_helper_by_url() {
   shell_snippet="!'${BASH_SOURCE}'  get-by-url"
-  git config --add credential.${remote_url}.helper  "$shell_snippet"
+  git config --local --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
 function fail() {
@@ -154,7 +154,7 @@ elif [[ "$action" = "$env_action_init_by_url" ]]; then
   || fail
 elif [[ "$action" = "$env_action_get" ]]; then
   if [[ "$git_action" = "get" ]]; then
-    echo @ Providing credentials for Git from $script_name>&2
+    echo @ $script_name Providing credentials for Git from $script_name>&2
     
     under_git \
     && set_login_var_name \
@@ -169,11 +169,11 @@ elif [[ "$action" = "$env_action_get" ]]; then
     echo password=${!password_var_name}
   else
     # For the store and the erase Git API commands.
-    echo @ Ignoring of Git action '"'$git_action'"'>&2
+    echo @ $script_name Ignoring of Git action '"'$git_action'"'>&2
   fi
 elif [[ "$action" = "$env_action_get_by_url" ]]; then
   if [[ "$git_action" = "get" ]]; then
-    echo @ Providing credentials for Git from $script_name>&2
+    echo @ $script_name Providing credentials for Git from $script_name>&2
     
     under_git \
     && set_login_var_name_by_url \
@@ -188,7 +188,7 @@ elif [[ "$action" = "$env_action_get_by_url" ]]; then
     echo password=${!password_var_name}
   else
     # For the store and the erase Git API commands.
-    echo @ Ignoring of Git action '"'$git_action'"'>&2
+    echo @ $script_name Ignoring of Git action '"'$git_action'"'>&2
   fi
 elif [[ "$action" = "help" ]]; then
   echo ''
