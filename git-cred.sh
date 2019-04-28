@@ -102,15 +102,17 @@ function set_remote_url_by_url() {
 
 function disable_other_git_helpers() {
   git config credential.helper ''
-  git config credential.${remote_url}.helper ''
+  #git config credential.${remote_url}.helper ''
 }
 
 function register_git_helper() {
-  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get  $remote"
+  shell_snippet="!'${BASH_SOURCE}'  get  $remote"
+  git config --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
 function register_git_helper_by_url() {
-  git config --add credential.${remote_url}.helper \'"$BASH_SOURCE\'  get"
+  shell_snippet="!'${BASH_SOURCE}'  get-by-url"
+  git config --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
 function fail() {
