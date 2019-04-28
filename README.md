@@ -28,7 +28,7 @@ To get the latest instructions type in a bash shell
     
 In a Windows shell type
 
-    bash git-cred.sh help
+    bash git-cred.sh  help
 
  #### Output from this command
 
