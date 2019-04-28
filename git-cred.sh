@@ -197,7 +197,7 @@ elif [[ "$action" = "help" ]]; then
   echo 1. Change the shell working directory to your local Git-repository.
   echo ' $ cd  <path-to-your-local-Git-Repo>'
   echo ''
-  echo 2. for a remote name.
+  echo 2. For a remote name.
   echo ''
   echo 2.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.
   echo '    In this variable names you must replace any dash with an underscore in <remote-name>.'
@@ -207,10 +207,9 @@ elif [[ "$action" = "help" ]]; then
   echo 2.2. Register behaviour by calling
   echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <remote-name>'
   echo ''
-  echo 3. for an URL '(your local Git-repo has no a registered remote name)'.
+  echo 3. For a remote repo URL '(your local Git-repo has no a registered remote name)'.
   echo ''
-  echo 3.1. Define credential environment variables that are suffixed
-  echo '    with a real remote name from your Git-repository.'
+  echo 3.1. Define credential environment variables.
   echo ' $ git_cred_username=some-login'
   echo ' $ git_cred_password=some-password'
   echo ''
