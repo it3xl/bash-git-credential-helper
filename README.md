@@ -38,7 +38,7 @@ In a Windows shell type
 
     cd  <path-to-your-local-Git-Repo>
 
-2\. for a remote name.
+2\. For a remote name.
 
 2\.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.  
 **In this variable names you must replace any dash with an underscore in \<remote-name\>.**
@@ -50,9 +50,9 @@ In a Windows shell type
 
     source <path-to>/git-cred.sh  init  <remote-name>
 
-3\. for an URL (your local Git-repo has no a registered remote name).
+3\. For a remote repo URL (your local Git-repo has no a registered remote name).
 
-3\.1. Define credential environment variables that are suffixed with a real remote name from your Git-repository.
+3\.1. Define credential environment variables.
 
     git_cred_username=some-login
     git_cred_password=some-password
@@ -61,15 +61,12 @@ In a Windows shell type
 
     source <path-to>/git-cred.sh  init-by-url <remote-Git-repo-url>
 
-@ Usage
-1\. Do not relocate this file after the installation
-   (otherwise repeat installation instructions).
-2\. Provide the credential environment variables once before a remote Git usage.
-   git fetch, push, pull, etc.
-3\. For use in Jenkins. Use Credentials Binding Plugin (or others)
-   to obtain credentials and hide them from any logging.
+@ Usage  
+1\. Do not relocate this file after the installation (otherwise repeat installation instructions).  
+2\. Provide the credential environment variables once before a remote Git usage (git fetch, push, pull, etc).
+3\. For use in Jenkins. Use Credentials Binding Plugin (or others) to obtain credentials and hide them from any logging.
 
-@ Sample and Getting Started
+@ Sample and Getting Started  
 Call test.sh to create confugured example repositories
 
     ./test.sh
