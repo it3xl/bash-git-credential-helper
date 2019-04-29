@@ -32,7 +32,7 @@ function echo_intro(){
 }
 
 function echo_installing(){
-  echo @ Installing of $script_name as a Git credential helper.>&2
+  echo @ Installing of $script_name as a Git credential helper>&2
 }
 
 function under_git(){
@@ -131,12 +131,24 @@ function echo_providing(){
   echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
-function not_an_action(){
+function is_no_actions(){
   [[ -z "$action" ]]
 }
 
 function no_action_init_by_remote(){
   [[ "$action" != "$env_action_init_by_remote" ]]
+}
+
+function no_action_init_by_url(){
+  [[ "$action" != "$env_action_init_by_url" ]]
+}
+
+function no_action_get_by_remote(){
+  [[ "$action" != "$env_action_get_by_remote" ]]
+}
+
+function no_action_get_by_url(){
+  [[ "$action" != "$env_action_get_by_url" ]]
 }
 
 function no_git_action(){
@@ -146,6 +158,10 @@ function no_git_action(){
   
   # For the store and the erase Git API commands.
   echo @ $script_name ignores Git action '"'$git_action'"  (https://github.com/it3xl/bash-git-credential-helper)'>&2
+}
+
+function no_action_help(){
+  [[ "$action" != "help" ]]
 }
 
 function output_credentials(){
@@ -211,7 +227,7 @@ function fail() {
 
 
 
-not_an_action \
+is_no_actions \
 && echo_intro
 
 no_action_init_by_remote \
@@ -229,7 +245,8 @@ no_action_init_by_remote \
 ) \
 || fail
 
-if [[ "$action" = "$env_action_init_by_url" ]]; then
+no_action_init_by_url \
+|| ( \
   echo_installing \
   && under_git \
   && has_url_key \
@@ -241,38 +258,41 @@ if [[ "$action" = "$env_action_init_by_url" ]]; then
   && set_remote_url_by_url \
   && disable_other_git_helpers \
   && register_git_helper_by_url \
-  || fail
-elif [[ "$action" = "$env_action_get_by_remote" ]]; then
-  no_git_action \
-  || ( \
-    echo_providing \
-    && under_git \
-    && has_url_key \
-    && set_login_var_name \
-    && check_has_login \
-    && set_password_var_name \
-    && check_has_password \
-    && set_remote_url \
-    && output_credentials \
-  ) \
-  || fail
-elif [[ "$action" = "$env_action_get_by_url" ]]; then
-  no_git_action \
-  || ( \
-    echo_providing \
-    && under_git \
-    && has_url_key \
-    && set_login_var_name \
-    && check_has_login \
-    && set_password_var_name \
-    && check_has_password \
-    && set_remote_url_by_url \
-    && output_credentials \
-  ) \
-  || fail
-elif [[ "$action" = "help" ]]; then
-  output_help
-fi
+) \
+|| fail
+
+no_action_get_by_remote \
+|| no_git_action \
+|| ( \
+  echo_providing \
+  && under_git \
+  && has_url_key \
+  && set_login_var_name \
+  && check_has_login \
+  && set_password_var_name \
+  && check_has_password \
+  && set_remote_url \
+  && output_credentials \
+) \
+|| fail
+
+no_action_get_by_url \
+|| no_git_action \
+|| ( \
+  echo_providing \
+  && under_git \
+  && has_url_key \
+  && set_login_var_name \
+  && check_has_login \
+  && set_password_var_name \
+  && check_has_password \
+  && set_remote_url_by_url \
+  && output_credentials \
+) \
+|| fail
+
+no_action_help \
+|| output_help
 
 
 #echo @@ $script_name end>&2
