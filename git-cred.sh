@@ -22,7 +22,7 @@ url_input=${3-}
 # but in our case it is always third parameter.
 git_action=${3-}
 
-function echo_intro(){
+function inform_intro(){
   echo ''>&2
   echo '  bash Git Credential Helper - https://github.com/it3xl/bash-git-credential-helper'>&2
   echo ''>&2
@@ -31,7 +31,7 @@ function echo_intro(){
   echo '  source '$script_name'  '$env_action_help>&2
 }
 
-function echo_installing(){
+function inform_installing(){
   echo @ Installing of $script_name as a Git credential helper>&2
 }
 
@@ -127,7 +127,7 @@ function register_git_helper_by_url() {
   echo '    '$(git config --local --get-all credential.${remote_url}.helper)
 }
 
-function echo_providing(){
+function inform_providing(){
   echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
@@ -228,11 +228,11 @@ function fail() {
 
 
 is_no_actions \
-&& echo_intro
+&& inform_intro
 
 no_action_init_by_remote \
 || ( \
-  echo_installing \
+  inform_installing \
   && under_git \
   && has_url_key \
   && set_login_var_name \
@@ -247,7 +247,7 @@ no_action_init_by_remote \
 
 no_action_init_by_url \
 || ( \
-  echo_installing \
+  inform_installing \
   && under_git \
   && has_url_key \
   && has_url_input \
@@ -264,7 +264,7 @@ no_action_init_by_url \
 no_action_get_by_remote \
 || no_git_action \
 || ( \
-  echo_providing \
+  inform_providing \
   && under_git \
   && has_url_key \
   && set_login_var_name \
@@ -279,7 +279,7 @@ no_action_get_by_remote \
 no_action_get_by_url \
 || no_git_action \
 || ( \
-  echo_providing \
+  inform_providing \
   && under_git \
   && has_url_key \
   && set_login_var_name \
@@ -293,6 +293,7 @@ no_action_get_by_url \
 
 no_action_help \
 || output_help
+
 
 
 #echo @@ $script_name end>&2
