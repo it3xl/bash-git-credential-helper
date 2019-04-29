@@ -35,25 +35,25 @@ echo ''
 echo @ Testing the help
 echo ======================================================================
 "$git_cred_path"  help>/dev/null
-echo --Accepted------------------------------------------------------------
+echo --Done----------------------------------------------------------------
 
 echo ''
-echo @ Testing the fail method for init
+echo @ Testing the fail method for init-by-remote '(no remote name)'
 echo ======================================================================
-"$git_cred_path"  init
-echo --Accepted------------------------------------------------------------
+"$git_cred_path"  init-by-remote
+echo --Done----------------------------------------------------------------
 
 echo ''
-echo @ Testing the fail method for init
+echo @ Testing the fail method for init-by-remote '(no credentials)'
 echo ======================================================================
-"$git_cred_path"  init  some-remote
-echo --Accepted------------------------------------------------------------
+"$git_cred_path"  init-by-remote  some-remote
+echo --Done----------------------------------------------------------------
 
 echo ''
 echo @ Testing the fail method for init-by-url
 echo ======================================================================
 "$git_cred_path"  init-by-url
-echo --Accepted------------------------------------------------------------
+echo --Done----------------------------------------------------------------
 
 
 

@@ -14,11 +14,11 @@ Install Git
 
 For a remote Git-repo URL
 
-    bash "/c/Jenkins/bash git credentila helper/git-cred.sh"  init-by-rul  https:/example.com/my.repo.git
+    bash "/c/Jenkins/bash git credentila helper/git-cred.sh"  init-by-url  https:/example.com/my.repo.git
 
 For a remote name
 
-    bash "/c/Jenkins/Your bash git credentila helper/location/git-cred.sh"  init  origin
+    bash "/c/Jenkins/Your bash git credentila helper/location/git-cred.sh"  init-by-remote  origin
 
 ### Instructions
 
@@ -48,7 +48,7 @@ In a Windows shell type
 
 2.2. Register behaviour by calling
 
-    source <path-to>/git-cred.sh  init  <remote-name>
+    source <path-to>/git-cred.sh  init-by-remote  <remote-name>
 
 3\. For a remote repo URL (your local Git-repo has no a registered remote name).
 

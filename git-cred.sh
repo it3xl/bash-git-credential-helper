@@ -5,20 +5,22 @@ invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 script_name=$(basename "$BASH_SOURCE")
 #echo @@ $script_name start>&2
 
-env_action_init=init
+env_action_init_by_remote=init-by-remote
 env_action_init_by_url=init-by-url
-env_action_get=get
+env_action_get_by_remote=get-by-remote
 env_action_get_by_url=get-by-url
 env_action_help=help
 
 
 action=${1-}
-remote=${2-}
-remote_escaped=${remote//-/_}
+url_key=${2-}
+url_key_escaped=${url_key//-/_}
+url_input=${3-}
+
 # Let's grab a Git's API action. It's always sent as the last parameter.
-git_action=${@:$#}
-
-
+#git_action=${@:$#}
+# but in our case it is always third parameter.
+git_action=${3-}
 
 function echo_intro(){
   echo ''>&2
@@ -46,11 +48,11 @@ function under_git(){
 }
 
 function set_login_var_name() {
-  login_var_name=git_cred_username_$remote_escaped
+  login_var_name=git_cred_username_$url_key_escaped
 }
 
 function set_login_var_name_by_url() {
-  login_var_name=git_cred_username
+  login_var_name=git_cred_username_$url_key_escaped
 }
 
 function check_has_login() {
@@ -62,11 +64,11 @@ function check_has_login() {
 }
 
 function set_password_var_name() {
-  password_var_name=git_cred_password_$remote_escaped
+  password_var_name=git_cred_password_$url_key_escaped
 }
 
 function set_password_var_name_by_url() {
-  password_var_name=git_cred_password
+  password_var_name=git_cred_password_$url_key_escaped
 }
 
 function check_has_password() {
@@ -78,25 +80,25 @@ function check_has_password() {
 }
 
 function check_remote() {
-  if [[ -z "$remote" ]]; then
-    echo @ Error. First parameter of a Git remote name is not provided.>&2
+  if [[ -z "$url_key" ]]; then
+    echo @ Error. First parameter is not provided. See '$ source '$script_name'  '$env_action_help.>&2
     
     return 1
   fi
 }
 
 function set_remote_url() {
-  git remote get-url $remote > /dev/null  ||  {
-    echo @ Error. There is no $remote remot in your Git-repository.>&2
+  git remote get-url $url_key > /dev/null  ||  {
+    echo @ Error. There is no $url_key remote in your Git-repository.>&2
 
     return 1
   }
 
-  remote_url=$(git remote get-url $remote)
+  remote_url=$(git remote get-url $url_key)
 }
 
 function set_remote_url_by_url() {
-  remote_url=$remote
+  remote_url=$url_input
 }
 
 
@@ -108,19 +110,25 @@ function disable_other_git_helpers() {
 function register_git_helper() {
   git config --local --remove-section credential.${remote_url} > /dev/null 2>&1 || true
   
-  shell_snippet="!'${BASH_SOURCE}'  get  $remote"
+  shell_snippet="!'${BASH_SOURCE}'  $env_action_get_by_remote  $url_key"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
+  
+  echo '    'at "credential.${remote_url}.helper" as
+  echo '    '$(git config --local --get-all credential.${remote_url}.helper)
 }
 
 function register_git_helper_by_url() {
   git config --local --remove-section credential.${remote_url} > /dev/null 2>&1 || true
   
-  shell_snippet="!'${BASH_SOURCE}'  get-by-url"
+  shell_snippet="!'${BASH_SOURCE}'  $env_action_get_by_url $url_key"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
+  
+  echo '    'at "credential.${remote_url}.helper" as
+  echo '    '$(git config --local --get-all credential.${remote_url}.helper)
 }
 
 function echo_providing(){
-  echo @ $script_name provides credentials for Git '(https://github.com/it3xl/bash-git-credential-helper)'>&2
+  echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
 function not_an_action(){
@@ -133,7 +141,7 @@ function not_git_action(){
   fi
   
   # For the store and the erase Git API commands.
-  echo @ $script_name Ignoring of Git action '"'$git_action'"'>&2
+  echo @ $script_name ignores Git action '"'$git_action'"  (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
 function output_credentials(){
@@ -156,16 +164,16 @@ function output_help(){
   echo ' $ git_cred_password_<remote-name>=some-password'
   echo ''
   echo 2.2. Register behaviour by calling
-  echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <remote-name>'
+  echo ' $ source <path-to>/'$script_name'  '$env_action_init_by_remote'  <remote-name>'
   echo ''
   echo 3. For a remote repo URL '(your local Git-repo has no a registered remote name)'.
   echo ''
-  echo 3.1. Define credential environment variables.
-  echo ' $ git_cred_username=some-login'
-  echo ' $ git_cred_password=some-password'
+  echo 3.1. Define credential environment variables with an arbitrary key '<any-chars>'.
+  echo ' $ git_cred_username_<any-chars>=some-login'
+  echo ' $ git_cred_password_<any-chars>=some-password'
   echo ''
   echo 3.2. Register behaviour by calling
-  echo ' $ source <path-to>/'$script_name'  '$env_action_init_by_url' <remote-Git-repo-url>'
+  echo ' $ source <path-to>/'$script_name'  '$env_action_init_by_url'  <any-chars>  <remote-Git-repo-url>'
   echo ''
   echo @ Usage
   echo 1. Do not relocate this file after the installation
@@ -202,7 +210,7 @@ function fail() {
 not_an_action \
 && echo_intro
 
-if [[ "$action" = "$env_action_init" ]]; then
+if [[ "$action" = "$env_action_init_by_remote" ]]; then
   echo_installing \
   && under_git \
   && set_login_var_name \
@@ -226,29 +234,33 @@ elif [[ "$action" = "$env_action_init_by_url" ]]; then
   && disable_other_git_helpers \
   && register_git_helper_by_url \
   || fail
-elif [[ "$action" = "$env_action_get" ]]; then
+elif [[ "$action" = "$env_action_get_by_remote" ]]; then
   not_git_action \
-  || echo_providing \
-  &&under_git \
-  && set_login_var_name \
-  && check_has_login \
-  && set_password_var_name \
-  && check_has_password \
-  && check_remote \
-  && set_remote_url \
-  && output_credentials \
+  || ( \
+    echo_providing \
+    && under_git \
+    && set_login_var_name \
+    && check_has_login \
+    && set_password_var_name \
+    && check_has_password \
+    && check_remote \
+    && set_remote_url \
+    && output_credentials
+  ) \
   || fail
 elif [[ "$action" = "$env_action_get_by_url" ]]; then
   not_git_action \
-  || echo_providing \
-  && under_git \
-  && set_login_var_name_by_url \
-  && check_has_login \
-  && set_password_var_name_by_url \
-  && check_has_password \
-  && check_remote \
-  && set_remote_url_by_url \
-  && output_credentials \
+  || ( \
+    echo_providing \
+    && under_git \
+    && set_login_var_name_by_url \
+    && check_has_login \
+    && set_password_var_name_by_url \
+    && check_has_password \
+    && check_remote \
+    && set_remote_url_by_url \
+    && output_credentials \
+  ) \
   || fail
 elif [[ "$action" = "help" ]]; then
   output_help
