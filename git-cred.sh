@@ -49,7 +49,7 @@ function under_git(){
 
 function has_url_key() {
   if [[ -z "$url_key" ]]; then
-    echo @ Error. Remote-name or an URL key parameter is not provided. See '$ source '$script_name'  '$env_action_help.>&2
+    echo @ Error. Remote-name or an URL key parameter is not provided. Call '"$ source '$script_name'  '$env_action_help'" for info'>&2
     
     return 1
   fi
@@ -57,7 +57,7 @@ function has_url_key() {
 
 function has_url_input() {
   if [[ -z "$url_input" ]]; then
-    echo @ Error. Url parameter is not provided. See '$ source '$script_name'  '$env_action_help.>&2
+    echo @ Error. Url parameter is not provided. Call '"$ source '$script_name'  '$env_action_help'" for info'>&2
     
     return 1
   fi
@@ -135,7 +135,11 @@ function not_an_action(){
   [[ -z "$action" ]]
 }
 
-function not_a_git_action(){
+function no_action_init_by_remote(){
+  [[ "$action" != "$env_action_init_by_remote" ]]
+}
+
+function no_git_action(){
   if [[ "$git_action" == "get" ]]; then
     return 1
   fi
@@ -210,7 +214,8 @@ function fail() {
 not_an_action \
 && echo_intro
 
-if [[ "$action" = "$env_action_init_by_remote" ]]; then
+no_action_init_by_remote \
+|| ( \
   echo_installing \
   && under_git \
   && has_url_key \
@@ -221,8 +226,10 @@ if [[ "$action" = "$env_action_init_by_remote" ]]; then
   && set_remote_url \
   && disable_other_git_helpers \
   && register_git_helper \
-  || fail
-elif [[ "$action" = "$env_action_init_by_url" ]]; then
+) \
+|| fail
+
+if [[ "$action" = "$env_action_init_by_url" ]]; then
   echo_installing \
   && under_git \
   && has_url_key \
@@ -236,7 +243,7 @@ elif [[ "$action" = "$env_action_init_by_url" ]]; then
   && register_git_helper_by_url \
   || fail
 elif [[ "$action" = "$env_action_get_by_remote" ]]; then
-  not_a_git_action \
+  no_git_action \
   || ( \
     echo_providing \
     && under_git \
@@ -246,11 +253,11 @@ elif [[ "$action" = "$env_action_get_by_remote" ]]; then
     && set_password_var_name \
     && check_has_password \
     && set_remote_url \
-    && output_credentials
+    && output_credentials \
   ) \
   || fail
 elif [[ "$action" = "$env_action_get_by_url" ]]; then
-  not_a_git_action \
+  no_git_action \
   || ( \
     echo_providing \
     && under_git \
