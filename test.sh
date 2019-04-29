@@ -58,6 +58,27 @@ source "$git_cred_path"  get  $remote_name
 echo --Accepted------------------------------------------------------------
 
 echo ''
+echo @ Multiple assigments are not a trouble
+echo ======================================================================
+
+# Installing git-cred as a Git credential helper.
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
+
+# Testing git-cred as a Git credential helper.
+source "$git_cred_path"  get  $remote_name  get
+
+# Ignoring of the store action of Git helper API.
+source "$git_cred_path"  get  $remote_name  store
+
+echo --Accepted------------------------------------------------------------
+
+echo ''
 echo @ Testing a remote name with a dash
 echo ======================================================================
 

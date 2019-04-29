@@ -106,11 +106,15 @@ function disable_other_git_helpers() {
 }
 
 function register_git_helper() {
+  git config --local --remove-section credential.${remote_url}
+  
   shell_snippet="!'${BASH_SOURCE}'  get  $remote"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
 function register_git_helper_by_url() {
+  git config --local --remove-section credential.${remote_url}
+  
   shell_snippet="!'${BASH_SOURCE}'  get-by-url"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
 }
