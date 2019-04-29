@@ -106,21 +106,21 @@ function disable_other_git_helpers() {
 }
 
 function register_git_helper() {
-  git config --local --remove-section credential.${remote_url}
+  git config --local --remove-section credential.${remote_url} > /dev/null 2>&1 || true
   
   shell_snippet="!'${BASH_SOURCE}'  get  $remote"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
 function register_git_helper_by_url() {
-  git config --local --remove-section credential.${remote_url}
+  git config --local --remove-section credential.${remote_url} > /dev/null 2>&1 || true
   
   shell_snippet="!'${BASH_SOURCE}'  get-by-url"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
 function echo_providing(){
-  echo @ $script_name Providing credentials for Git>&2
+  echo @ $script_name provides credentials for Git '(https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
 function not_an_action(){
