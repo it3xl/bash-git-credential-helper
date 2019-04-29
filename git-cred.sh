@@ -47,11 +47,23 @@ function under_git(){
   fi;
 }
 
-function set_login_var_name() {
-  login_var_name=git_cred_username_$url_key_escaped
+function has_url_key() {
+  if [[ -z "$url_key" ]]; then
+    echo @ Error. Remote-name or an URL key parameter is not provided. See '$ source '$script_name'  '$env_action_help.>&2
+    
+    return 1
+  fi
 }
 
-function set_login_var_name_by_url() {
+function has_url_input() {
+  if [[ -z "$url_input" ]]; then
+    echo @ Error. Url parameter is not provided. See '$ source '$script_name'  '$env_action_help.>&2
+    
+    return 1
+  fi
+}
+
+function set_login_var_name() {
   login_var_name=git_cred_username_$url_key_escaped
 }
 
@@ -67,21 +79,9 @@ function set_password_var_name() {
   password_var_name=git_cred_password_$url_key_escaped
 }
 
-function set_password_var_name_by_url() {
-  password_var_name=git_cred_password_$url_key_escaped
-}
-
 function check_has_password() {
   if [[ "${!password_var_name:-}" == "" ]]; then
     echo @ Error. There is no data in $login_var_name env-variable.>&2
-    
-    return 1
-  fi
-}
-
-function check_remote() {
-  if [[ -z "$url_key" ]]; then
-    echo @ Error. First parameter is not provided. See '$ source '$script_name'  '$env_action_help.>&2
     
     return 1
   fi
@@ -135,7 +135,7 @@ function not_an_action(){
   [[ -z "$action" ]]
 }
 
-function not_git_action(){
+function not_a_git_action(){
   if [[ "$git_action" == "get" ]]; then
     return 1
   fi
@@ -213,51 +213,52 @@ not_an_action \
 if [[ "$action" = "$env_action_init_by_remote" ]]; then
   echo_installing \
   && under_git \
+  && has_url_key \
   && set_login_var_name \
   && check_has_login \
   && set_password_var_name \
   && check_has_password \
-  && check_remote \
   && set_remote_url \
   && disable_other_git_helpers \
   && register_git_helper \
   || fail
 elif [[ "$action" = "$env_action_init_by_url" ]]; then
   echo_installing \
-  &&under_git \
-  && set_login_var_name_by_url \
+  && under_git \
+  && has_url_key \
+  && has_url_input \
+  && set_login_var_name \
   && check_has_login \
-  && set_password_var_name_by_url \
+  && set_password_var_name \
   && check_has_password \
-  && check_remote \
   && set_remote_url_by_url \
   && disable_other_git_helpers \
   && register_git_helper_by_url \
   || fail
 elif [[ "$action" = "$env_action_get_by_remote" ]]; then
-  not_git_action \
+  not_a_git_action \
   || ( \
     echo_providing \
     && under_git \
+    && has_url_key \
     && set_login_var_name \
     && check_has_login \
     && set_password_var_name \
     && check_has_password \
-    && check_remote \
     && set_remote_url \
     && output_credentials
   ) \
   || fail
 elif [[ "$action" = "$env_action_get_by_url" ]]; then
-  not_git_action \
+  not_a_git_action \
   || ( \
     echo_providing \
     && under_git \
-    && set_login_var_name_by_url \
+    && has_url_key \
+    && set_login_var_name \
     && check_has_login \
-    && set_password_var_name_by_url \
+    && set_password_var_name \
     && check_has_password \
-    && check_remote \
     && set_remote_url_by_url \
     && output_credentials \
   ) \
