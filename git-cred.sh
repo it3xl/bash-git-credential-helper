@@ -115,82 +115,29 @@ function register_git_helper_by_url() {
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
 }
 
-function fail() {
-  if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
-    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
-    
-    return
-  fi
-  
-  exit 1001
+function echo_providing(){
+  echo @ $script_name Providing credentials for Git>&2
 }
 
+function not_an_action(){
+  [[ -z "$action" ]]
+}
 
-if [[ -z "$action" ]]; then
-  echo_intro
-elif [[ "$action" = "$env_action_init" ]]; then
-  echo_installing \
-  && under_git \
-  && set_login_var_name \
-  && check_has_login \
-  && set_password_var_name \
-  && check_has_password \
-  && check_remote \
-  && set_remote_url \
-  && disable_other_git_helpers \
-  && register_git_helper \
-  || fail
-elif [[ "$action" = "$env_action_init_by_url" ]]; then
-  echo_installing \
-  &&under_git \
-  && set_login_var_name_by_url \
-  && check_has_login \
-  && set_password_var_name_by_url \
-  && check_has_password \
-  && check_remote \
-  && set_remote_url_by_url \
-  && disable_other_git_helpers \
-  && register_git_helper_by_url \
-  || fail
-elif [[ "$action" = "$env_action_get" ]]; then
-  if [[ "$git_action" = "get" ]]; then
-    echo @ $script_name Providing credentials for Git>&2
-    
-    under_git \
-    && set_login_var_name \
-    && check_has_login \
-    && set_password_var_name \
-    && check_has_password \
-    && check_remote \
-    && set_remote_url \
-    || fail
-    
-    echo username=${!login_var_name}
-    echo password=${!password_var_name}
-  else
-    # For the store and the erase Git API commands.
-    echo @ $script_name Ignoring of Git action '"'$git_action'"'>&2
+function not_git_action(){
+  if [[ "$git_action" == "get" ]]; then
+    return 1
   fi
-elif [[ "$action" = "$env_action_get_by_url" ]]; then
-  if [[ "$git_action" = "get" ]]; then
-    echo @ $script_name Providing credentials for Git from $script_name>&2
-    
-    under_git \
-    && set_login_var_name_by_url \
-    && check_has_login \
-    && set_password_var_name_by_url \
-    && check_has_password \
-    && check_remote \
-    && set_remote_url_by_url \
-    || fail
-    
-    echo username=${!login_var_name}
-    echo password=${!password_var_name}
-  else
-    # For the store and the erase Git API commands.
-    echo @ $script_name Ignoring of Git action '"'$git_action'"'>&2
-  fi
-elif [[ "$action" = "help" ]]; then
+  
+  # For the store and the erase Git API commands.
+  echo @ $script_name Ignoring of Git action '"'$git_action'"'>&2
+}
+
+function output_credentials(){
+  echo username=${!login_var_name}
+  echo password=${!password_var_name}
+}
+
+function output_help(){
   echo ''
   echo @ Installation.
   echo ''
@@ -234,6 +181,73 @@ elif [[ "$action" = "help" ]]; then
   echo '   properly configured as a credential helper for your Git-remote.'
   echo *. Just provide the above environment variables before any
   echo '   remote usage of your Git-repository (fetch, push, pull).'
+}
+
+function fail() {
+  if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
+    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
+    
+    return
+  fi
+  
+  exit 1001
+}
+
+
+
+not_an_action \
+&& echo_intro
+
+if [[ "$action" = "$env_action_init" ]]; then
+  echo_installing \
+  && under_git \
+  && set_login_var_name \
+  && check_has_login \
+  && set_password_var_name \
+  && check_has_password \
+  && check_remote \
+  && set_remote_url \
+  && disable_other_git_helpers \
+  && register_git_helper \
+  || fail
+elif [[ "$action" = "$env_action_init_by_url" ]]; then
+  echo_installing \
+  &&under_git \
+  && set_login_var_name_by_url \
+  && check_has_login \
+  && set_password_var_name_by_url \
+  && check_has_password \
+  && check_remote \
+  && set_remote_url_by_url \
+  && disable_other_git_helpers \
+  && register_git_helper_by_url \
+  || fail
+elif [[ "$action" = "$env_action_get" ]]; then
+  not_git_action \
+  || echo_providing \
+  &&under_git \
+  && set_login_var_name \
+  && check_has_login \
+  && set_password_var_name \
+  && check_has_password \
+  && check_remote \
+  && set_remote_url \
+  && output_credentials \
+  || fail
+elif [[ "$action" = "$env_action_get_by_url" ]]; then
+  not_git_action \
+  || echo_providing \
+  && under_git \
+  && set_login_var_name_by_url \
+  && check_has_login \
+  && set_password_var_name_by_url \
+  && check_has_password \
+  && check_remote \
+  && set_remote_url_by_url \
+  && output_credentials \
+  || fail
+elif [[ "$action" = "help" ]]; then
+  output_help
 fi
 
 
