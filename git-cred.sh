@@ -1,4 +1,5 @@
 set -euf +x -o pipefail
+#set +e
 #set -x
 
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -25,7 +26,10 @@ known_action=0
 failed=0
 
 
+
 function action_intro(){
+  [[ -z "$action" ]] || { true; return; }
+
   known_action=1
   
   echo ''>&2
@@ -118,10 +122,6 @@ function register_git_helper() {
 
 function inform_providing(){
   echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
-}
-
-function no_actions(){
-  [[ -z "$action" ]]
 }
 
 function no_action_init(){
@@ -260,8 +260,7 @@ function action_provide(){
 }
 
 function main(){
-  no_actions \
-  && action_intro
+  action_intro
 
   no_action_init \
   || action_init \
