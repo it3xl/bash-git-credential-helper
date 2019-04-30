@@ -28,7 +28,9 @@ failed=0
 
 
 function action_intro(){
-  [[ -z "$action" ]] || { true; return; }
+  [[ -z "$action" ]] \
+  || { true; \
+    return; }
 
   known_action=1
   
@@ -124,14 +126,6 @@ function inform_providing(){
   echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
-function no_action_init(){
-  [[ "$action" != "$env_action_init" ]]
-}
-
-function no_action_provide(){
-  [[ "$action" != "$env_action_provide" ]]
-}
-
 function no_git_action(){
   if [[ "$git_action" == "get" ]]; then
     return 1
@@ -141,16 +135,15 @@ function no_git_action(){
   echo @ $script_name ignores Git action '"'$git_action'"  (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
-function no_action_help(){
-  [[ "$action" != "help" ]]
-}
-
 function output_credentials(){
   echo username=${!login_var_name}
   echo password=${!password_var_name}
 }
 
 function action_help(){
+  [[ "$action" != "help" ]] \
+  && return
+  
   known_action=1
 
   echo ''
@@ -227,6 +220,9 @@ function unknown_action_fail() {
 }
 
 function action_init() {
+  [[ "$action" != "$env_action_init" ]] \
+  && return
+  
   known_action=1
   
   inform_installing \
@@ -243,6 +239,9 @@ function action_init() {
 }
 
 function action_provide(){
+  [[ "$action" != "$env_action_provide" ]] \
+  && return
+  
   known_action=1
   
   no_git_action \
@@ -262,16 +261,13 @@ function action_provide(){
 function main(){
   action_intro
 
-  no_action_init \
-  || action_init \
+  action_init \
   || fail_exit
 
-  no_action_provide \
-  || action_provide \
+  action_provide \
   || fail_exit
 
-  no_action_help \
-  || action_help
+  action_help
   
   unknown_action_fail
 }
