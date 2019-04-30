@@ -1,4 +1,5 @@
 set -euf +x -o pipefail
+#set -x
 
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -21,6 +22,8 @@ url_input=${3-}
 #git_action=${@:$#}
 # but in our case it is always third parameter.
 git_action=${3-}
+
+failed=0
 
 function inform_intro(){
   echo ''>&2
@@ -215,7 +218,10 @@ function output_help(){
   echo '   remote usage of your Git-repository (fetch, push, pull).'
 }
 
-function fail() {
+function fail_exit() {
+  failed=1
+  echo Exit on a logic error in $script_name.
+  
   if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
     echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
     
@@ -225,74 +231,100 @@ function fail() {
   exit 1001
 }
 
+function fail_unknown_action() {
+  (( $failed == 1 )) && return
 
+  echo Exit on an unknown for $script_name action '"'$action'"'
+  
+  if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
+    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
+    
+    return
+  fi
+  
+  exit 1002
+}
 
-is_no_actions \
-&& inform_intro
+function main(){
+  is_no_actions \
+  && inform_intro \
+  && return
 
-no_action_init_by_remote \
-|| { \
-  inform_installing \
-  && under_git \
-  && has_url_key \
-  && set_login_var_name \
-  && check_has_login \
-  && set_password_var_name \
-  && check_has_password \
-  && set_remote_url \
-  && disable_other_git_helpers \
-  && register_git_helper \
-; } \
-|| fail
+  no_action_init_by_remote \
+  || { \
+    inform_installing \
+    && under_git \
+    && has_url_key \
+    && set_login_var_name \
+    && check_has_login \
+    && set_password_var_name \
+    && check_has_password \
+    && set_remote_url \
+    && disable_other_git_helpers \
+    && register_git_helper \
+    && return \
+  ; } \
+  || fail_exit
 
-no_action_init_by_url \
-|| { \
-  inform_installing \
-  && under_git \
-  && has_url_key \
-  && has_url_input \
-  && set_login_var_name \
-  && check_has_login \
-  && set_password_var_name \
-  && check_has_password \
-  && set_remote_url_by_url \
-  && disable_other_git_helpers \
-  && register_git_helper_by_url \
-; } \
-|| fail
+  no_action_init_by_url \
+  || { \
+    inform_installing \
+    && under_git \
+    && has_url_key \
+    && has_url_input \
+    && set_login_var_name \
+    && check_has_login \
+    && set_password_var_name \
+    && check_has_password \
+    && set_remote_url_by_url \
+    && disable_other_git_helpers \
+    && register_git_helper_by_url \
+    && return \
+  ; } \
+  || fail_exit
 
-no_action_get_by_remote \
-|| no_git_action \
-|| { \
-  inform_providing \
-  && under_git \
-  && has_url_key \
-  && set_login_var_name \
-  && check_has_login \
-  && set_password_var_name \
-  && check_has_password \
-  && set_remote_url \
-  && output_credentials \
-; } \
-|| fail
+  no_action_get_by_remote \
+  || { no_git_action && return; } \
+  || { \
+    inform_providing \
+    && under_git \
+    && has_url_key \
+    && set_login_var_name \
+    && check_has_login \
+    && set_password_var_name \
+    && check_has_password \
+    && set_remote_url \
+    && output_credentials \
+    && return \
+  ; } \
+  || fail_exit
 
-no_action_get_by_url \
-|| no_git_action \
-|| { \
-  inform_providing \
-  && under_git \
-  && has_url_key \
-  && set_login_var_name \
-  && check_has_login \
-  && set_password_var_name \
-  && check_has_password \
-  && set_remote_url_by_url \
-  && output_credentials \
-; } \
-|| fail
+  no_action_get_by_url \
+  || { no_git_action && return; } \
+  || { \
+    inform_providing \
+    && under_git \
+    && has_url_key \
+    && set_login_var_name \
+    && check_has_login \
+    && set_password_var_name \
+    && check_has_password \
+    && set_remote_url_by_url \
+    && output_credentials \
+    && return \
+  ; } \
+  || fail_exit
 
-no_action_help \
-|| output_help
+  no_action_help \
+  || { \
+    output_help \
+    && return \
+  ; }
+  
+  fail_unknown_action
+}
+main
+
 
 
 
