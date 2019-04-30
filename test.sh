@@ -21,6 +21,7 @@ git_cred_path="$git_cred_dir/git-cred.sh"
 
 cp -f  "$git_cred_source"  "$git_cred_path"
 
+
 echo ''
 echo @ Testing a remote name usage
 echo ======================================================================
@@ -60,8 +61,46 @@ source "$git_cred_path"  get-by-remote  $remote_name
 echo --Done----------------------------------------------------------------
 
 echo ''
+echo @ Testing a remote URL usage
+echo ======================================================================
+
+test_repo_url="$test_repos/test repo without remote name"
+mkdir -p "$test_repo_url"
+
+cd "$test_repo_url"
+
+git init >/dev/null
+
+remote_url=https://example.com/my.git
+
+git_cred_username_some_text=another-login
+git_cred_password_some_text=another-password
+
+
+
+# Installing git-cred as a Git credential helper.
+source "$git_cred_path"  init-by-url  some-text  $remote_url
+
+# Testing git-cred as a Git credential helper.
+source "$git_cred_path"  get-by-url  some-text  get
+
+# Ignoring of the store action of Git helper API.
+source "$git_cred_path"  get-by-url  some-text  store
+
+# Ignoring of the erase action of Git helper API.
+source "$git_cred_path"  get-by-url  some-text erase
+
+# Ignoring of an empty action of Git helper API.
+source "$git_cred_path"  get-by-url  some-text
+
+echo --Done----------------------------------------------------------------
+
+
+echo ''
 echo @ Multiple installations are not a trouble
 echo ======================================================================
+
+cd "$test_repo_remote"
 
 # Installing git-cred as a Git credential helper.
 source "$git_cred_path"  init-by-remote  $remote_name
@@ -105,41 +144,6 @@ source "$git_cred_path"  get-by-remote  $remote_dashed_name erase
 
 # Ignoring of an empty action of Git helper API.
 source "$git_cred_path"  get-by-remote  $remote_dashed_name 
-
-echo --Done----------------------------------------------------------------
-
-echo ''
-echo @ Testing a remote URL usage
-echo ======================================================================
-
-test_repo_url="$test_repos/test repo without remote name"
-mkdir -p "$test_repo_url"
-
-cd "$test_repo_url"
-
-git init >/dev/null
-
-remote_url=https://example.com/my.git
-
-git_cred_username_some_text=another-login
-git_cred_password_some_text=another-password
-
-
-
-# Installing git-cred as a Git credential helper.
-source "$git_cred_path"  init-by-url  some-text  $remote_url
-
-# Testing git-cred as a Git credential helper.
-source "$git_cred_path"  get-by-url  some-text  get
-
-# Ignoring of the store action of Git helper API.
-source "$git_cred_path"  get-by-url  some-text  store
-
-# Ignoring of the erase action of Git helper API.
-source "$git_cred_path"  get-by-url  some-text erase
-
-# Ignoring of an empty action of Git helper API.
-source "$git_cred_path"  get-by-url  some-text
 
 echo --Done----------------------------------------------------------------
 
