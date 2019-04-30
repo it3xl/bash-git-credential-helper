@@ -176,7 +176,7 @@ function action_help(){
 
 function fail_exit() {
   failed=1
-  echo Exit on a logic error in $script_name.
+  echo Exit with an error in $script_name.
   
   if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
     echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
