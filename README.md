@@ -48,7 +48,7 @@ In a Windows shell, type
 
 Some Continues Integration tools (Jenkins) fill them automatically
 
-2.2. Register behaviour by calling
+2.2. Register git-cred.sh as the Git credentila helper by calling
 
     source <path-to>/git-cred.sh  init  <remote_name>
 
@@ -59,7 +59,7 @@ Some Continues Integration tools (Jenkins) fill them automatically
     git_cred_username_<some_chars>=another-login
     git_cred_password_<some_chars>=another-password
 
-3\.2. Register behaviour by calling
+3\.2. Register git-cred.sh as the Git credentila helper by calling
 
     source <path-to>/git-cred.sh  init  arbitrary_word <remote-Git-repo-url>
 
