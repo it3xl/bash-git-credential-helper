@@ -139,12 +139,12 @@ function action_help(){
   echo 2. For a remote name.
   echo ''
   echo 2.1. Define credential environment variables as below that are suffixed with a real remote name from your local Git-repository.
-  echo '    In these variables names you must replace any dash with an underscore in <remote_name>.'
+  echo '    You must replace any dashes with underscores in <remote_name> in these variable names.'
   echo ' $ git_cred_username_<remote_name>=some-login'
   echo ' $ git_cred_password_<remote_name>=some-password'
   echo '    Some Continues Integration tools (Jenkins) fill them automatically'
   echo ''
-  echo 2.2. Register behaviour by calling
+  echo 2.2. Register $script_name as the Git credentila helper by calling
   echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <remote_name>'
   echo ''
   echo 3. For a remote repo URL '(your local Git-repo has no a registered remote name)'.
@@ -153,13 +153,13 @@ function action_help(){
   echo ' $ git_cred_username_<some_chars>=another-login'
   echo ' $ git_cred_password_<some_chars>=another-password'
   echo ''
-  echo 3.2. Register behaviour by calling
+  echo 3.2. Register $script_name as the Git credentila helper by calling
   echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <some_chars>  <remote-Git-repo-url>'
   echo ''
   echo @ Usage
   echo 1. Do not relocate this file after the installation
-  echo '   (otherwise repeat installation instructions).'
-  echo 2. Provide the credential environment variables once before a remote Git usage.
+  echo '   (otherwise repeat the installation instructions).'
+  echo 2. Provide the credential environment variables once before any remote Git usage.
   echo '   git fetch, push, pull, etc.'
   echo 3. For use in Jenkins. Use Credentials Binding Plugin '(or others)'
   echo '   to obtain credentials and hide them from logging.'
@@ -171,7 +171,7 @@ function action_help(){
   echo ''
   echo @ How it works
   echo *. Git will call $script_name automatically as it will become
-  echo '   properly configured as a credential helper for your Git-remote.'
+  echo '   properly configured as a Git credential helper.'
   echo *. Just provide the above environment variables before any
   echo '   remote usage of your Git-repository (fetch, push, pull, etc.).'
 }
