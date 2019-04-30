@@ -231,7 +231,7 @@ is_no_actions \
 && inform_intro
 
 no_action_init_by_remote \
-|| ( \
+|| { \
   inform_installing \
   && under_git \
   && has_url_key \
@@ -242,11 +242,11 @@ no_action_init_by_remote \
   && set_remote_url \
   && disable_other_git_helpers \
   && register_git_helper \
-) \
+; } \
 || fail
 
 no_action_init_by_url \
-|| ( \
+|| { \
   inform_installing \
   && under_git \
   && has_url_key \
@@ -258,12 +258,12 @@ no_action_init_by_url \
   && set_remote_url_by_url \
   && disable_other_git_helpers \
   && register_git_helper_by_url \
-) \
+; } \
 || fail
 
 no_action_get_by_remote \
 || no_git_action \
-|| ( \
+|| { \
   inform_providing \
   && under_git \
   && has_url_key \
@@ -273,12 +273,12 @@ no_action_get_by_remote \
   && check_has_password \
   && set_remote_url \
   && output_credentials \
-) \
+; } \
 || fail
 
 no_action_get_by_url \
 || no_git_action \
-|| ( \
+|| { \
   inform_providing \
   && under_git \
   && has_url_key \
@@ -288,7 +288,7 @@ no_action_get_by_url \
   && check_has_password \
   && set_remote_url_by_url \
   && output_credentials \
-) \
+; } \
 || fail
 
 no_action_help \
