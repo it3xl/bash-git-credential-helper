@@ -64,8 +64,8 @@ Some Continues Integration tools (Jenkins) fill them automatically
     source <path-to>/git-cred.sh  init  arbitrary_word <remote-Git-repo-url>
 
 @ Usage  
-1\. Do not relocate this file after the installation (otherwise repeat installation instructions).  
-2\. Provide the credential environment variables once before a remote Git usage (git fetch, push, pull, etc.).  
+1\. Do not relocate this file after the installation (otherwise repeat the installation instructions).  
+2\. Provide the credential environment variables once before any remote Git usage (git fetch, push, pull, etc.).  
 3\. For use in Jenkins. Use Credentials Binding Plugin (or others) to obtain credentials and hide them from any logging.
 
 @ Sample and Getting Started  
@@ -76,5 +76,5 @@ Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/t
 See its code to get started.
 
 @ How it works  
-*. Git will call git-cred.sh automatically as it will become properly configured as a credential helper for your Git-remote.  
-*. Just provide the above environment variables before any remote usage of your Git-repository (fetch, push, pull).
+*. Git will call git-cred.sh automatically as it will become properly configured as a Git credential helper.  
+*. Just provide the above environment variables before any remote usage of your Git-repository (fetch, push, pull, etc.).
