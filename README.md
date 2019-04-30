@@ -41,7 +41,7 @@ In a Windows shell, type
 2\. For a remote name.
 
 2\.1. Define credential environment variables as below that are suffixed with a real remote name from your local Git-repository.  
-**You must replace any dashes with underscores in <\remote_name\> in these variable names.**
+**You must replace any dashes with underscores in \<remote_name\> in these variable names.**
 
     git_cred_username_<remote_name>=some-login
     git_cred_password_<remote_name>=some-password
