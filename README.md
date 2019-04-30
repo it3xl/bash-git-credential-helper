@@ -22,11 +22,11 @@ For a remote name (you can use any existing remote name)
 
 ### Instructions
 
-To get the latest instructions type in a bash shell
+To get the latest instructions, type in a bash shell
 
     source git-cred.sh  help
     
-In a Windows shell type
+In a Windows shell, type
 
     bash git-cred.sh  help
 
