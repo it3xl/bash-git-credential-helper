@@ -6,10 +6,8 @@ invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 script_name=$(basename "$BASH_SOURCE")
 #echo @@ $script_name start>&2
 
-env_action_init_by_remote=init-by-remote
-env_action_init_by_url=init-by-url
-env_action_get_by_remote=get-by-remote
-env_action_get_by_url=get-by-url
+env_action_init=init
+env_action_get=provide
 env_action_help=help
 
 
@@ -58,14 +56,6 @@ function has_url_key() {
   fi
 }
 
-function has_url_input() {
-  if [[ -z "$url_input" ]]; then
-    echo @ Error. Url parameter is not provided. Call '"$ source '$script_name'  '$env_action_help'" for info'>&2
-    
-    return 1
-  fi
-}
-
 function set_login_var_name() {
   login_var_name=git_cred_username_$url_key_escaped
 }
@@ -91,19 +81,21 @@ function check_has_password() {
 }
 
 function set_remote_url() {
-  git remote get-url $url_key > /dev/null  ||  {
-    echo @ Error. There is no $url_key remote in your Git-repository.>&2
+  remote_url=$url_input
+  [[ -n "$remote_url" ]] && {
+    return
+  }
+  
+  local remote_name=$url_key
+  git remote get-url $remote_name > /dev/null \
+  || {
+    echo @ Error. There is no '"'$remote_name'"' remote in your Git-repository.>&2
 
     return 1
   }
 
-  remote_url=$(git remote get-url $url_key)
+  remote_url=$(git remote get-url $remote_name)
 }
-
-function set_remote_url_by_url() {
-  remote_url=$url_input
-}
-
 
 function disable_other_git_helpers() {
   git config --local credential.helper ''
@@ -113,17 +105,7 @@ function disable_other_git_helpers() {
 function register_git_helper() {
   git config --local --remove-section credential.${remote_url} > /dev/null 2>&1 || true
   
-  shell_snippet="!'${BASH_SOURCE}'  $env_action_get_by_remote  $url_key"
-  git config --local --add credential.${remote_url}.helper  "$shell_snippet"
-  
-  echo '    'at "credential.${remote_url}.helper" as
-  echo '    '$(git config --local --get-all credential.${remote_url}.helper)
-}
-
-function register_git_helper_by_url() {
-  git config --local --remove-section credential.${remote_url} > /dev/null 2>&1 || true
-  
-  shell_snippet="!'${BASH_SOURCE}'  $env_action_get_by_url $url_key"
+  shell_snippet="!'${BASH_SOURCE}'  $env_action_get  $url_key"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
   
   echo '    'at "credential.${remote_url}.helper" as
@@ -138,20 +120,12 @@ function is_no_actions(){
   [[ -z "$action" ]]
 }
 
-function no_action_init_by_remote(){
-  [[ "$action" != "$env_action_init_by_remote" ]]
+function no_action_init(){
+  [[ "$action" != "$env_action_init" ]]
 }
 
-function no_action_init_by_url(){
-  [[ "$action" != "$env_action_init_by_url" ]]
-}
-
-function no_action_get_by_remote(){
-  [[ "$action" != "$env_action_get_by_remote" ]]
-}
-
-function no_action_get_by_url(){
-  [[ "$action" != "$env_action_get_by_url" ]]
+function no_action_get(){
+  [[ "$action" != "$env_action_get" ]]
 }
 
 function no_git_action(){
@@ -187,7 +161,7 @@ function output_help(){
   echo ' $ git_cred_password_<remote-name>=some-password'
   echo ''
   echo 2.2. Register behaviour by calling
-  echo ' $ source <path-to>/'$script_name'  '$env_action_init_by_remote'  <remote-name>'
+  echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <remote-name>'
   echo ''
   echo 3. For a remote repo URL '(your local Git-repo has no a registered remote name)'.
   echo ''
@@ -196,7 +170,7 @@ function output_help(){
   echo ' $ git_cred_password_<any-chars>=some-password'
   echo ''
   echo 3.2. Register behaviour by calling
-  echo ' $ source <path-to>/'$script_name'  '$env_action_init_by_url'  <any-chars>  <remote-Git-repo-url>'
+  echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <any-chars>  <remote-Git-repo-url>'
   echo ''
   echo @ Usage
   echo 1. Do not relocate this file after the installation
@@ -250,7 +224,7 @@ function main(){
   && inform_intro \
   && return
 
-  no_action_init_by_remote \
+  no_action_init \
   || { \
     inform_installing \
     && under_git \
@@ -266,24 +240,7 @@ function main(){
   ; } \
   || fail_exit
 
-  no_action_init_by_url \
-  || { \
-    inform_installing \
-    && under_git \
-    && has_url_key \
-    && has_url_input \
-    && set_login_var_name \
-    && check_has_login \
-    && set_password_var_name \
-    && check_has_password \
-    && set_remote_url_by_url \
-    && disable_other_git_helpers \
-    && register_git_helper_by_url \
-    && return \
-  ; } \
-  || fail_exit
-
-  no_action_get_by_remote \
+  no_action_get \
   || { no_git_action && return; } \
   || { \
     inform_providing \
@@ -294,22 +251,6 @@ function main(){
     && set_password_var_name \
     && check_has_password \
     && set_remote_url \
-    && output_credentials \
-    && return \
-  ; } \
-  || fail_exit
-
-  no_action_get_by_url \
-  || { no_git_action && return; } \
-  || { \
-    inform_providing \
-    && under_git \
-    && has_url_key \
-    && set_login_var_name \
-    && check_has_login \
-    && set_password_var_name \
-    && check_has_password \
-    && set_remote_url_by_url \
     && output_credentials \
     && return \
   ; } \

@@ -42,21 +42,21 @@ git_cred_password_origin=some-password
 
 
 # Installing git-cred as a Git credential helper.
-source "$git_cred_path"  init-by-remote  $remote_name
+source "$git_cred_path"  init  $remote_name
 
 remote_url=$(git remote get-url $remote_name)
 
 # Testing git-cred as a Git credential helper.
-source "$git_cred_path"  get-by-remote  $remote_name  get
+source "$git_cred_path"  provide  $remote_name  get
 
 # Ignoring of the store action of Git helper API.
-source "$git_cred_path"  get-by-remote  $remote_name  store
+source "$git_cred_path"  provide  $remote_name  store
 
 # Ignoring of the erase action of Git helper API.
-source "$git_cred_path"  get-by-remote  $remote_name erase
+source "$git_cred_path"  provide  $remote_name erase
 
 # Ignoring of an empty action of Git helper API.
-source "$git_cred_path"  get-by-remote  $remote_name 
+source "$git_cred_path"  provide  $remote_name 
 
 echo --Done----------------------------------------------------------------
 
@@ -79,19 +79,19 @@ git_cred_password_some_text=another-password
 
 
 # Installing git-cred as a Git credential helper.
-source "$git_cred_path"  init-by-url  some-text  $remote_url
+source "$git_cred_path"  init  some-text  $remote_url
 
 # Testing git-cred as a Git credential helper.
-source "$git_cred_path"  get-by-url  some-text  get
+source "$git_cred_path"  provide  some-text  get
 
 # Ignoring of the store action of Git helper API.
-source "$git_cred_path"  get-by-url  some-text  store
+source "$git_cred_path"  provide  some-text  store
 
 # Ignoring of the erase action of Git helper API.
-source "$git_cred_path"  get-by-url  some-text erase
+source "$git_cred_path"  provide  some-text erase
 
 # Ignoring of an empty action of Git helper API.
-source "$git_cred_path"  get-by-url  some-text
+source "$git_cred_path"  provide  some-text
 
 echo --Done----------------------------------------------------------------
 
@@ -103,15 +103,15 @@ echo ======================================================================
 cd "$test_repo_remote"
 
 # Installing git-cred as a Git credential helper.
-source "$git_cred_path"  init-by-remote  $remote_name
-source "$git_cred_path"  init-by-remote  $remote_name
-source "$git_cred_path"  init-by-remote  $remote_name
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
+source "$git_cred_path"  init  $remote_name
 
 # Testing git-cred as a Git credential helper.
-source "$git_cred_path"  get-by-remote  $remote_name  get
+source "$git_cred_path"  provide  $remote_name  get
 
 # Ignoring of the store action of Git helper API.
-source "$git_cred_path"  get-by-remote  $remote_name  store
+source "$git_cred_path"  provide  $remote_name  store
 
 echo --Done----------------------------------------------------------------
 
@@ -131,19 +131,19 @@ git_cred_password_ori_gin=some-password
 
 
 # Installing git-cred as a Git credential helper.
-source "$git_cred_path"  init-by-remote  $remote_dashed_name
+source "$git_cred_path"  init  $remote_dashed_name
 
 # Testing git-cred as a Git credential helper.
-source "$git_cred_path"  get-by-remote  $remote_dashed_name  get
+source "$git_cred_path"  provide  $remote_dashed_name  get
 
 # Ignoring of the store action of Git helper API.
-source "$git_cred_path"  get-by-remote  $remote_dashed_name  store
+source "$git_cred_path"  provide  $remote_dashed_name  store
 
 # Ignoring of the erase action of Git helper API.
-source "$git_cred_path"  get-by-remote  $remote_dashed_name erase
+source "$git_cred_path"  provide  $remote_dashed_name erase
 
 # Ignoring of an empty action of Git helper API.
-source "$git_cred_path"  get-by-remote  $remote_dashed_name 
+source "$git_cred_path"  provide  $remote_dashed_name 
 
 echo --Done----------------------------------------------------------------
 

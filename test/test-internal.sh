@@ -38,21 +38,21 @@ echo ======================================================================
 echo --Done----------------------------------------------------------------
 
 echo ''
-echo @ Testing the fail method for init-by-remote '(no remote name)'
+echo @ Testing the fail method for init '(no remote name or an arbitrary key)'
 echo ======================================================================
-"$git_cred_path"  init-by-remote
+"$git_cred_path"  init
 echo --Done----------------------------------------------------------------
 
 echo ''
-echo @ Testing the fail method for init-by-remote '(no credentials)'
+echo @ Testing the fail method for init '(no credentials)'
 echo ======================================================================
-"$git_cred_path"  init-by-remote  some-remote
+"$git_cred_path"  init  some-remote
 echo --Done----------------------------------------------------------------
 
 echo ''
-echo @ Testing the fail method for init-by-url
+echo @ Testing the fail method for init '(no url)'
 echo ======================================================================
-"$git_cred_path"  init-by-url
+"$git_cred_path"  init  some-remote  http://example.com/my.repo.git
 echo --Done----------------------------------------------------------------
 
 echo ''
