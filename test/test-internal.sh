@@ -8,17 +8,17 @@ echo '$ '$(basename "$BASH_SOURCE")
 
 
 # Clean ups previous tests.
-test_repos="$invoke_path/te st"
+test_repos="$invoke_path/test internal"
 if [[ -d "$test_repos" ]]; then
   rm -rf "$test_repos"
 fi
 mkdir -p "$test_repos"
 
-git_cred_source="$invoke_path/git-cred.sh"
 git_cred_dir="$test_repos/git cred"
 mkdir -p "$git_cred_dir"
 git_cred_path="$git_cred_dir/git-cred.sh"
 
+git_cred_source="$invoke_path/../git-cred.sh"
 cp -f  "$git_cred_source"  "$git_cred_path"
 
 cd "$test_repos"
