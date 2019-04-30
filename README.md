@@ -14,11 +14,11 @@ Install Git
 
 For a remote Git-repo URL
 
-    bash "/c/Jenkins/bash git credentila helper/git-cred.sh"  init-by-url  https:/example.com/my.repo.git
+    bash "/c/Jenkins/bash git credentila helper/git-cred.sh"  init  arbitrary_word  https:/example.com/my.repo.git
 
-For a remote name
+For a remote name (you can use any existing remote name)
 
-    bash "/c/Jenkins/Your bash git credentila helper/location/git-cred.sh"  init-by-remote  origin
+    bash "/c/Jenkins/Your bash git credentila helper/location/git-cred.sh"  init  origin
 
 ### Instructions
 
@@ -40,38 +40,40 @@ In a Windows shell type
 
 2\. For a remote name.
 
-2\.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.  
-**In this variable names you must replace any dash with an underscore in \<remote-name\>.**
+2\.1. Define credential environment variables as below that are suffixed with a real remote name from your local Git-repository.  
+**In this variable names you must replace any dash with an underscore in \<remote_name\>.**
 
-    git_cred_username_<remote-name>=some-login
-    git_cred_password_<remote-name>=some-password
+    git_cred_username_<remote_name>=some-login
+    git_cred_password_<remote_name>=some-password
+
+Some Continues Integration tools (Jenkins) fill them automatically
 
 2.2. Register behaviour by calling
 
-    source <path-to>/git-cred.sh  init-by-remote  <remote-name>
+    source <path-to>/git-cred.sh  init  <remote_name>
 
 3\. For a remote repo URL (your local Git-repo has no a registered remote name).
 
-3\.1. Define credential environment variables.
+3\.1. Define credential environment variables with an arbitrary word \<some_chars\>.
 
-    git_cred_username=some-login
-    git_cred_password=some-password
+    git_cred_username_<some_chars>=another-login
+    git_cred_password_<some_chars>=another-password
 
 3\.2. Register behaviour by calling
 
-    source <path-to>/git-cred.sh  init-by-url <remote-Git-repo-url>
+    source <path-to>/git-cred.sh  init  arbitrary_word <remote-Git-repo-url>
 
 @ Usage  
 1\. Do not relocate this file after the installation (otherwise repeat installation instructions).  
-2\. Provide the credential environment variables once before a remote Git usage (git fetch, push, pull, etc).  
+2\. Provide the credential environment variables once before a remote Git usage (git fetch, push, pull, etc.).  
 3\. For use in Jenkins. Use Credentials Binding Plugin (or others) to obtain credentials and hide them from any logging.
 
 @ Sample and Getting Started  
-Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/test.sh) to create confugured example repositories
+Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/test.sh) to create configured example repositories
 
-    ./test.sh
+    ./test/test.sh
 
-See the code in test.sh to get started.
+See its code to get started.
 
 @ How it works  
 *. Git will call git-cred.sh automatically as it will become properly configured as a credential helper for your Git-remote.  

@@ -1,6 +1,7 @@
+# This file is taken from https://github.com/it3xl/bash-git-credential-helper
+
 set -euf +x -o pipefail
-#set +e
-#set -x
+
 
 invoke_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -137,22 +138,23 @@ function action_help(){
   echo ''
   echo 2. For a remote name.
   echo ''
-  echo 2.1. Define credential environment variables that are suffixed with a real remote name from your local Git-repository.
-  echo '    In this variable names you must replace any dash with an underscore in <remote-name>.'
-  echo ' $ git_cred_username_<remote-name>=some-login'
-  echo ' $ git_cred_password_<remote-name>=some-password'
+  echo 2.1. Define credential environment variables as below that are suffixed with a real remote name from your local Git-repository.
+  echo '    In these variables names you must replace any dash with an underscore in <remote_name>.'
+  echo ' $ git_cred_username_<remote_name>=some-login'
+  echo ' $ git_cred_password_<remote_name>=some-password'
+  echo '    Some Continues Integration tools (Jenkins) fill them automatically'
   echo ''
   echo 2.2. Register behaviour by calling
-  echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <remote-name>'
+  echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <remote_name>'
   echo ''
   echo 3. For a remote repo URL '(your local Git-repo has no a registered remote name)'.
   echo ''
-  echo 3.1. Define credential environment variables with an arbitrary key '<any-chars>'.
-  echo ' $ git_cred_username_<any-chars>=some-login'
-  echo ' $ git_cred_password_<any-chars>=some-password'
+  echo 3.1. Define credential environment variables with an arbitrary key '<some_chars>'.
+  echo ' $ git_cred_username_<some_chars>=another-login'
+  echo ' $ git_cred_password_<some_chars>=another-password'
   echo ''
   echo 3.2. Register behaviour by calling
-  echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <any-chars>  <remote-Git-repo-url>'
+  echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <some_chars>  <remote-Git-repo-url>'
   echo ''
   echo @ Usage
   echo 1. Do not relocate this file after the installation
@@ -160,18 +162,18 @@ function action_help(){
   echo 2. Provide the credential environment variables once before a remote Git usage.
   echo '   git fetch, push, pull, etc.'
   echo 3. For use in Jenkins. Use Credentials Binding Plugin '(or others)'
-  echo '   to obtain credentials and hide them from any logging.'
+  echo '   to obtain credentials and hide them from logging.'
   echo ''
   echo @ Sample and Getting Started
-  echo Call test.sh to create confugured example repositories
-  echo ' $ ./test.sh'
-  echo See the code in test.sh to get started.
+  echo Call test/test.sh to create configured example repositories ' (if missed, see https://github.com/it3xl/bash-git-credential-helper)'
+  echo ' $ ./test/test.sh'
+  echo See its code to get started.
   echo ''
   echo @ How it works
   echo *. Git will call $script_name automatically as it will become
   echo '   properly configured as a credential helper for your Git-remote.'
   echo *. Just provide the above environment variables before any
-  echo '   remote usage of your Git-repository (fetch, push, pull).'
+  echo '   remote usage of your Git-repository (fetch, push, pull, etc.).'
 }
 
 function fail_exit() {
