@@ -42,10 +42,6 @@ function action_intro(){
   echo '  source '$script_name'  '$env_action_help>&2
 }
 
-function inform_installing(){
-  echo @ Installing of $script_name as a Git credential helper>&2
-}
-
 function under_git(){
   local is_inside_git_work_tree=1;
   
@@ -120,19 +116,6 @@ function register_git_helper() {
   
   echo '    'at "credential.${remote_url}.helper" as
   echo '    '$(git config --local --get-all credential.${remote_url}.helper)
-}
-
-function inform_providing(){
-  echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
-}
-
-function no_git_action(){
-  if [[ "$git_action" == "get" ]]; then
-    return 1
-  fi
-  
-  # For the store and the erase Git API commands.
-  echo @ $script_name ignores Git action '"'$git_action'"  (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
 function output_credentials(){
@@ -225,8 +208,9 @@ function action_init() {
   
   known_action=1
   
-  inform_installing \
-  && under_git \
+  echo @ Installing of $script_name as a Git credential helper>&2
+  
+  under_git \
   && has_url_key \
   && set_login_var_name \
   && check_has_login \
@@ -244,11 +228,16 @@ function action_provide(){
   
   known_action=1
   
-  no_git_action \
-  && return
+  [[ "$git_action" != "get" ]] && {
+    # For "store" and "erase" Git API commands.
+    echo @ $script_name ignores Git action '"'$git_action'"  (https://github.com/it3xl/bash-git-credential-helper)'>&2
+    
+    return
+  }
   
-  inform_providing \
-  && under_git \
+  echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
+
+  under_git \
   && has_url_key \
   && set_login_var_name \
   && check_has_login \
