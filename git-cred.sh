@@ -114,7 +114,7 @@ function register_git_helper() {
   shell_snippet="!'${BASH_SOURCE}'  $env_action_provide  $url_key"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
   
-  echo '    'at "credential.${remote_url}.helper" as
+  echo '    'at "credential.${remote_url}.helper" 'Git-configuration; as'
   echo '    '$(git config --local --get-all credential.${remote_url}.helper)
 }
 
@@ -230,12 +230,12 @@ function action_provide(){
   
   [[ "$git_action" != "get" ]] && {
     # For "store" and "erase" Git API commands.
-    echo @ $script_name ignores Git action '"'$git_action'"  (https://github.com/it3xl/bash-git-credential-helper)'>&2
+    echo @ $script_name ignores Git API action '"'$git_action'"'>&2
     
     return
   }
   
-  echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
+  echo @ $script_name provides credentials for Git ' (details https://github.com/it3xl/bash-git-credential-helper)'>&2
 
   under_git \
   && has_url_key \
