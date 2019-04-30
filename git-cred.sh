@@ -7,7 +7,7 @@ script_name=$(basename "$BASH_SOURCE")
 #echo @@ $script_name start>&2
 
 env_action_init=init
-env_action_get=provide
+env_action_provide=provide
 env_action_help=help
 
 
@@ -21,9 +21,13 @@ url_input=${3-}
 # but in our case it is always third parameter.
 git_action=${3-}
 
+known_action=0
 failed=0
 
-function inform_intro(){
+
+function action_intro(){
+  known_action=1
+  
   echo ''>&2
   echo '  bash Git Credential Helper - https://github.com/it3xl/bash-git-credential-helper'>&2
   echo ''>&2
@@ -105,7 +109,7 @@ function disable_other_git_helpers() {
 function register_git_helper() {
   git config --local --remove-section credential.${remote_url} > /dev/null 2>&1 || true
   
-  shell_snippet="!'${BASH_SOURCE}'  $env_action_get  $url_key"
+  shell_snippet="!'${BASH_SOURCE}'  $env_action_provide  $url_key"
   git config --local --add credential.${remote_url}.helper  "$shell_snippet"
   
   echo '    'at "credential.${remote_url}.helper" as
@@ -116,7 +120,7 @@ function inform_providing(){
   echo @ $script_name provides credentials for Git ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
 }
 
-function is_no_actions(){
+function no_actions(){
   [[ -z "$action" ]]
 }
 
@@ -124,8 +128,8 @@ function no_action_init(){
   [[ "$action" != "$env_action_init" ]]
 }
 
-function no_action_get(){
-  [[ "$action" != "$env_action_get" ]]
+function no_action_provide(){
+  [[ "$action" != "$env_action_provide" ]]
 }
 
 function no_git_action(){
@@ -146,7 +150,9 @@ function output_credentials(){
   echo password=${!password_var_name}
 }
 
-function output_help(){
+function action_help(){
+  known_action=1
+
   echo ''
   echo @ Installation.
   echo ''
@@ -205,7 +211,8 @@ function fail_exit() {
   exit 1001
 }
 
-function fail_unknown_action() {
+function unknown_action_fail() {
+  (( $known_action == 1 )) && return
   (( $failed == 1 )) && return
 
   echo Exit on an unknown for $script_name action '"'$action'"'
@@ -219,50 +226,55 @@ function fail_unknown_action() {
   exit 1002
 }
 
-function main(){
-  is_no_actions \
-  && inform_intro \
+function action_init() {
+  known_action=1
+  
+  inform_installing \
+  && under_git \
+  && has_url_key \
+  && set_login_var_name \
+  && check_has_login \
+  && set_password_var_name \
+  && check_has_password \
+  && set_remote_url \
+  && disable_other_git_helpers \
+  && register_git_helper \
+  ;
+}
+
+function action_provide(){
+  known_action=1
+  
+  no_git_action \
   && return
+  
+  inform_providing \
+  && under_git \
+  && has_url_key \
+  && set_login_var_name \
+  && check_has_login \
+  && set_password_var_name \
+  && check_has_password \
+  && set_remote_url \
+  && output_credentials
+}
+
+function main(){
+  no_actions \
+  && action_intro
 
   no_action_init \
-  || { \
-    inform_installing \
-    && under_git \
-    && has_url_key \
-    && set_login_var_name \
-    && check_has_login \
-    && set_password_var_name \
-    && check_has_password \
-    && set_remote_url \
-    && disable_other_git_helpers \
-    && register_git_helper \
-    && return \
-  ; } \
+  || action_init \
   || fail_exit
 
-  no_action_get \
-  || { no_git_action && return; } \
-  || { \
-    inform_providing \
-    && under_git \
-    && has_url_key \
-    && set_login_var_name \
-    && check_has_login \
-    && set_password_var_name \
-    && check_has_password \
-    && set_remote_url \
-    && output_credentials \
-    && return \
-  ; } \
+  no_action_provide \
+  || action_provide \
   || fail_exit
 
   no_action_help \
-  || { \
-    output_help \
-    && return \
-  ; }
+  || action_help
   
-  fail_unknown_action
+  unknown_action_fail
 }
 main
 
