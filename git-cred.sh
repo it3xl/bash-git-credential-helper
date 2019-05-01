@@ -23,9 +23,11 @@ url_input=${3-}
 # but in our case it is always third parameter.
 git_action=${3-}
 
-known_action=0
-failed=0
+git_cred_known_action=0
 
+# States reserved for external libraries.
+GIT_CRED_FAILED=0
+#GIT_CRED_DO_NOT_EXIT
 
 
 function action_intro(){
@@ -33,7 +35,7 @@ function action_intro(){
   || { true; \
     return; }
 
-  known_action=1
+  git_cred_known_action=1
   
   echo>&2
   echo '  bash Git Credential Helper - https://github.com/it3xl/bash-git-credential-helper'>&2
@@ -69,7 +71,7 @@ function set_login_var_name() {
 
 function check_has_login() {
   if [[ "${!login_var_name:-}" == "" ]]; then
-    echo @ Error. There is no data in $login_var_name env-variable.>&2
+    echo @ Error. There is no data in '"'$login_var_name'"' env-variable.>&2
     
     return 1
   fi
@@ -81,7 +83,7 @@ function set_password_var_name() {
 
 function check_has_password() {
   if [[ "${!password_var_name:-}" == "" ]]; then
-    echo @ Error. There is no data in $login_var_name env-variable.>&2
+    echo @ Error. There is no data in '"'$login_var_name'"' env-variable.>&2
     
     return 1
   fi
@@ -128,7 +130,7 @@ function action_help(){
   [[ "$action" != "help" ]] \
   && return
   
-  known_action=1
+  git_cred_known_action=1
 
   echo
   echo @ Installation.
@@ -177,11 +179,11 @@ function action_help(){
 }
 
 function fail_exit() {
-  failed=1
-  echo Exit with an error in $script_name.
+  GIT_CRED_FAILED=1
+  echo Exit from $script_name on an error.
   
   if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
-    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
+    echo Exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
     
     return
   fi
@@ -190,13 +192,13 @@ function fail_exit() {
 }
 
 function unknown_action_fail() {
-  (( $known_action == 1 )) && return
-  (( $failed == 1 )) && return
+  (( $git_cred_known_action == 1 )) && return
+  (( $GIT_CRED_FAILED == 1 )) && return
 
   echo Exit on an unknown for $script_name action '"'$action'"  (https://github.com/it3xl/bash-git-credential-helper)'
   
   if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
-    echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
+    echo Exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
     
     return
   fi
@@ -208,7 +210,7 @@ function action_init() {
   [[ "$action" != "$env_action_init" ]] \
   && return
   
-  known_action=1
+  git_cred_known_action=1
   
   echo @ Installing of $script_name as a Git credential helper ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
   
@@ -228,7 +230,7 @@ function action_provide(){
   [[ "$action" != "$env_action_provide" ]] \
   && return
   
-  known_action=1
+  git_cred_known_action=1
   
   [[ "$git_action" != "get" ]] && {
     # For "store" and "erase" Git API commands.
