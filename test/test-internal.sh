@@ -25,32 +25,32 @@ cd "$test_repos"
 
 export GIT_CRED_DO_NOT_EXIT=123
 
-echo ''
+echo
 echo @ Produces the intro.
 echo ======================================================================
 "$git_cred_path" 2>/dev/null
 echo --Accepted if empty---------------------------------------------------
 
-echo ''
+echo
 echo @ Produces the help
 echo ======================================================================
 "$git_cred_path"  help>/dev/null
 echo --Done----------------------------------------------------------------
 
-echo ''
+echo
 echo @ Fails for init '(no remote name or an arbitrary key)'
 echo ======================================================================
 "$git_cred_path"  init
 echo --Done----------------------------------------------------------------
 
-echo ''
+echo
 echo @ Fails for init '(no credentials)'
 echo ======================================================================
 "$git_cred_path"  init  some-remote
 echo --Done----------------------------------------------------------------
 
 
-echo ''
+echo
 echo @ Fails for init '(there is no the remote name)'
 echo ======================================================================
 export git_cred_username_my_origin=some-login
@@ -59,13 +59,13 @@ export git_cred_password_my_origin=some-password
 "$git_cred_path"  init  my_origin
 echo --Done----------------------------------------------------------------
 
-echo ''
+echo
 echo @ Fails for init '(no url)'
 echo ======================================================================
 "$git_cred_path"  init  some-remote  http://example.com/my.repo.git
 echo --Done----------------------------------------------------------------
 
-echo ''
+echo
 echo @ Notifies about an unknow action
 echo ======================================================================
 "$git_cred_path"  some-action

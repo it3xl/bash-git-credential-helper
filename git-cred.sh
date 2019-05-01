@@ -35,11 +35,11 @@ function action_intro(){
 
   known_action=1
   
-  echo ''>&2
+  echo>&2
   echo '  bash Git Credential Helper - https://github.com/it3xl/bash-git-credential-helper'>&2
-  echo ''>&2
+  echo>&2
   echo '  For help type'>&2
-  echo ''>&2
+  echo>&2
   echo '  source '$script_name'  '$env_action_help>&2
 }
 
@@ -130,32 +130,32 @@ function action_help(){
   
   known_action=1
 
-  echo ''
+  echo
   echo @ Installation.
-  echo ''
+  echo
   echo 1. Change the shell working directory to your local Git-repository.
   echo ' $ cd  <path-to-your-local-Git-Repo>'
-  echo ''
+  echo
   echo 2. For a remote name.
-  echo ''
+  echo
   echo 2.1. Define credential environment variables as below that are suffixed with a real remote name from your local Git-repository.
   echo '    You must replace any dashes with underscores in <remote_name> in these variable names.'
   echo ' $ git_cred_username_<remote_name>=some-login'
   echo ' $ git_cred_password_<remote_name>=some-password'
   echo '    Some Continues Integration tools (Jenkins) fill them automatically'
-  echo ''
+  echo
   echo 2.2. Register $script_name as the Git credentila helper by calling
   echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <remote_name>'
-  echo ''
+  echo
   echo 3. For a remote repo URL '(your local Git-repo has no a registered remote name)'.
-  echo ''
+  echo
   echo 3.1. Define credential environment variables with an arbitrary key '<some_chars>'.
   echo ' $ git_cred_username_<some_chars>=another-login'
   echo ' $ git_cred_password_<some_chars>=another-password'
-  echo ''
+  echo
   echo 3.2. Register $script_name as the Git credentila helper by calling
   echo ' $ source <path-to>/'$script_name'  '$env_action_init'  <some_chars>  <remote-Git-repo-url>'
-  echo ''
+  echo
   echo @ Usage
   echo 1. Do not relocate this file after the installation
   echo '   (otherwise repeat the installation instructions).'
@@ -163,12 +163,12 @@ function action_help(){
   echo '   git fetch, push, pull, etc.'
   echo 3. For use in Jenkins. Use Credentials Binding Plugin '(or others)'
   echo '   to obtain credentials and hide them from logging.'
-  echo ''
+  echo
   echo @ Sample and Getting Started
   echo Call test/test.sh to create configured example repositories ' (if missed, see https://github.com/it3xl/bash-git-credential-helper)'
   echo ' $ ./test/test.sh'
   echo See its code to get started.
-  echo ''
+  echo
   echo @ How it works
   echo *. Git will call $script_name automatically as it will become
   echo '   properly configured as a Git credential helper.'

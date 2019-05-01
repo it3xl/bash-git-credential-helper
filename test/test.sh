@@ -22,7 +22,7 @@ git_cred_source="$invoke_path/../git-cred.sh"
 cp -f  "$git_cred_source"  "$git_cred_path"
 
 
-echo ''
+echo
 echo @ Testing a remote name usage
 echo ======================================================================
 
@@ -60,7 +60,7 @@ source "$git_cred_path"  provide  $remote_name
 
 echo --Done----------------------------------------------------------------
 
-echo ''
+echo
 echo @ Testing a remote URL usage
 echo ======================================================================
 
@@ -96,7 +96,7 @@ source "$git_cred_path"  provide  some-text
 echo --Done----------------------------------------------------------------
 
 
-echo ''
+echo
 echo @ Multiple installations are not a trouble
 echo ======================================================================
 
@@ -115,7 +115,7 @@ source "$git_cred_path"  provide  $remote_name  store
 
 echo --Done----------------------------------------------------------------
 
-echo ''
+echo
 echo @ Testing a remote name with a dash
 echo ======================================================================
 
