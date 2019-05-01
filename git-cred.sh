@@ -147,8 +147,8 @@ function action_help(){
   echo
   echo @ Installation.
   echo
-  echo 1. Change the shell working directory to your local Git-repository.
-  echo ' $ cd  <path-to-your-local-Git-Repo>'
+  echo 1. Change the shell working directory to your local Git-repository root.
+  echo ' $ cd  <path-to-your-local-Git-Repo-root>'
   echo
   echo 2. For a remote name.
   echo

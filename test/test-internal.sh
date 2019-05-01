@@ -38,20 +38,38 @@ echo ======================================================================
 echo --Done----------------------------------------------------------------
 
 echo
+echo @ Fails if it is not a Git-repo root.
+echo ======================================================================
+"$git_cred_path"  init
+echo --Done----------------------------------------------------------------
+
+echo
+echo @ Fails if it is a subfolder in a Git-repo directory tree.
+echo ======================================================================
+git init && echo
+mkdir oppa
+cd oppa
+
+"$git_cred_path"  init
+
+cd ..
+echo --Done----------------------------------------------------------------
+
+echo
 echo @ Fails for init '(no remote name or an arbitrary key)'
 echo ======================================================================
 "$git_cred_path"  init
 echo --Done----------------------------------------------------------------
 
 echo
-echo @ Fails for init '(no credentials)'
+echo @ Fails for init '(no credentials for a remote name)'
 echo ======================================================================
 "$git_cred_path"  init  some-remote
 echo --Done----------------------------------------------------------------
 
 
 echo
-echo @ Fails for init '(there is no the remote name)'
+echo @ Fails for init '(there is no such a remote name)'
 echo ======================================================================
 export git_cred_username_my_origin=some-login
 export git_cred_password_my_origin=some-password
@@ -60,9 +78,9 @@ export git_cred_password_my_origin=some-password
 echo --Done----------------------------------------------------------------
 
 echo
-echo @ Fails for init '(no url)'
+echo @ Fails for init '(no credentials for an URL)'
 echo ======================================================================
-"$git_cred_path"  init  some-remote  http://example.com/my.repo.git
+"$git_cred_path"  init  some-text  http://example.com/my.repo.git
 echo --Done----------------------------------------------------------------
 
 echo
