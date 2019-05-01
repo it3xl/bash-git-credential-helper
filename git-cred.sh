@@ -51,7 +51,19 @@ function under_git(){
   git rev-parse --is-inside-work-tree > /dev/null 2>&1  ||  is_inside_git_work_tree=0
   
   if (( $is_inside_git_work_tree != 1 )); then
-    echo @ Error. This script is run not inside a Git-repository directory tree.>&2
+    echo @ Error. Script"'"s working directory must be inside a Git-repository directory tree.>&2
+    
+    return 1
+  fi;
+}
+
+function is_git_root(){
+  local rel_path_to_root=$(git rev-parse --show-cdup)
+  
+  if [[ -n $rel_path_to_root ]]; then
+    # It is very often that git-cred hurts Git credential configurations of parent repositories.
+    # It is much safer to require from users to set working directory on a Git repo root.
+    echo @ Error. Script"'"s working directory must be a Git-repository root directory.>&2
     
     return 1
   fi;
@@ -214,7 +226,7 @@ function action_init() {
   
   echo @ Installing of $script_name as a Git credential helper ' (https://github.com/it3xl/bash-git-credential-helper)'>&2
   
-  under_git \
+  is_git_root \
   && has_url_key \
   && set_login_var_name \
   && check_has_login \
@@ -241,8 +253,7 @@ function action_provide(){
   
   echo @ $script_name provides credentials for Git ' (details https://github.com/it3xl/bash-git-credential-helper)'>&2
 
-  under_git \
-  && has_url_key \
+  has_url_key \
   && set_login_var_name \
   && check_has_login \
   && set_password_var_name \
