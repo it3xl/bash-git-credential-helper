@@ -193,7 +193,7 @@ function unknown_action_fail() {
   (( $known_action == 1 )) && return
   (( $failed == 1 )) && return
 
-  echo Exit on an unknown for $script_name action '"'$action'"'
+  echo Exit on an unknown for $script_name action '"'$action'"  (https://github.com/it3xl/bash-git-credential-helper)'
   
   if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
     echo The exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
@@ -210,7 +210,7 @@ function action_init() {
   
   known_action=1
   
-  echo @ Installing of $script_name as a Git credential helper>&2
+  echo @ Installing of $script_name as a Git credential helper ' (https://github.com/it3xl/bash-git-credential-helper'>&2
   
   under_git \
   && has_url_key \
