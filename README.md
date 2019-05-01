@@ -73,7 +73,7 @@ Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/t
 
 See its code to get started.
 
-**[git-sync](https://github.com/it3xl/git-sync)** project is integrated with **git-cred** and you can dig out some usage there.
+**[git-sync](https://github.com/it3xl/git-sync)** project is integrated with **git-cred** and you can dig out some usage from there, too.
 
 @ How it works  
 *. Git will call git-cred.sh automatically as it will become properly configured as a Git credential helper.  
