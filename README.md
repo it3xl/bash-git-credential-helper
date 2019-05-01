@@ -22,21 +22,19 @@ For a remote name (you can use any existing remote name)
 
 ### Instructions
 
-To get the latest instructions, type in a bash shell
+You always can run in a bash shell
 
     source git-cred.sh  help
     
-In a Windows shell, type
+Or in a Windows shell
 
     bash git-cred.sh  help
 
- **An output from this command**
-
 @ Installation.
 
-1\. Change the shell working directory to your local Git-repository.
+1\. Change the shell working directory to your local Git-repository root.
 
-    cd  <path-to-your-local-Git-Repo>
+    cd  <path-to-your-local-Git-Repo-root>
 
 2\. For a remote name.
 
@@ -74,6 +72,8 @@ Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/t
     ./test/test.sh
 
 See its code to get started.
+
+[git-sync](https://github.com/it3xl/git-sync) project is integrated with **git-cred** and you can dig out some usage there.
 
 @ How it works  
 *. Git will call git-cred.sh automatically as it will become properly configured as a Git credential helper.  
