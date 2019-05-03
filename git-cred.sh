@@ -26,8 +26,9 @@ git_action=${3-}
 git_cred_known_action=0
 
 # States reserved for external libraries.
-GIT_CRED_FAILED=0
-#GIT_CRED_DO_NOT_EXIT
+export GIT_CRED_FAILED=0
+#export GIT_CRED_DO_NOT_EXIT
+#export GIT_CRED_TRACE
 
 
 function action_intro(){
@@ -191,10 +192,10 @@ function action_help(){
 }
 
 function fail_exit() {
-  GIT_CRED_FAILED=1
+  export GIT_CRED_FAILED=1
   echo Exit from $script_name on an error.
   
-  if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
+  if [[ "${GIT_CRED_DO_NOT_EXIT:-0}" != "0" ]]; then
     echo Exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
     
     return
@@ -209,7 +210,7 @@ function unknown_action_fail() {
 
   echo Exit on an unknown for $script_name action '"'$action'"  (https://github.com/it3xl/bash-git-credential-helper)'
   
-  if [[ "${GIT_CRED_DO_NOT_EXIT:+1}" == "1" ]]; then
+  if [[ "${GIT_CRED_DO_NOT_EXIT:-0}" != "0" ]]; then
     echo Exit is suppressed by GIT_CRED_DO_NOT_EXIT env var
     
     return
@@ -245,13 +246,18 @@ function action_provide(){
   git_cred_known_action=1
   
   [[ "$git_action" != "get" ]] && {
-    # For "store" and "erase" Git API commands.
-    echo @ $script_name ignores Git API action '"'$git_action'"'>&2
+    if [[ "${GIT_CRED_TRACE:-0}" != "0" ]]; then
+      # For "store" and "erase" Git API commands.
+      echo @ $script_name ignores Git API action '"'$git_action'"'>&2
+    fi
     
     return
   }
   
-  echo @ $script_name provides credentials for Git ' (details https://github.com/it3xl/bash-git-credential-helper)'>&2
+  if [[ "${GIT_CRED_TRACE:-0}" != "0" ]]; then
+    echo @ $script_name provides credentials for Git ' (details https://github.com/it3xl/bash-git-credential-helper)'>&2
+  fi
+
 
   has_url_key \
   && set_login_var_name \

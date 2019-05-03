@@ -7,6 +7,9 @@ echo '$ '$(basename "$BASH_SOURCE")
 
 
 
+export GIT_CRED_TRACE=1
+
+
 # Clean ups previous tests.
 test_repos="$invoke_path/test main"
 if [[ -d "$test_repos" ]]; then
@@ -115,6 +118,7 @@ source "$git_cred_path"  provide  $remote_name  store
 
 echo --Done----------------------------------------------------------------
 
+
 echo
 echo @ Testing a remote name with a dash
 echo ======================================================================
@@ -148,6 +152,26 @@ source "$git_cred_path"  provide  $remote_dashed_name
 echo --Done----------------------------------------------------------------
 
 
+echo
+echo @ No tracing output
+echo ======================================================================
+
+export GIT_CRED_TRACE=
+
+cd "$test_repo_remote"
+
+# Installing git-cred as a Git credential helper.
+source "$git_cred_path"  init  $remote_name
+
+# Testing git-cred as a Git credential helper.
+source "$git_cred_path"  provide  $remote_name  get
+
+# Ignoring of the store action of Git helper API.
+source "$git_cred_path"  provide  $remote_name  store
+
+export GIT_CRED_TRACE=1
+
+echo --Done----------------------------------------------------------------
 
 
 

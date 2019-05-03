@@ -7,6 +7,9 @@ echo '$ '$(basename "$BASH_SOURCE")
 
 
 
+export GIT_CRED_DO_NOT_EXIT=1
+
+
 # Clean ups previous tests.
 test_repos="$invoke_path/test internal"
 if [[ -d "$test_repos" ]]; then
@@ -23,7 +26,6 @@ cp -f  "$git_cred_source"  "$git_cred_path"
 
 cd "$test_repos"
 
-export GIT_CRED_DO_NOT_EXIT=123
 
 echo
 echo @ Produces the intro.
