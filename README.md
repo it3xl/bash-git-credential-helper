@@ -67,9 +67,9 @@ Some Continues Integration tools (Jenkins) fill them automatically
 3\. For use in Jenkins. Use Credentials Binding Plugin (or others) to obtain credentials and hide them from any logging.
 
 @ Sample and Getting Started  
-Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/test.sh) to create configured example repositories
+Call [test.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/test/test.sh) to create configured example repositories
 
-    ./test/test.sh
+    $  ./test/test.sh
 
 See its code to get started.
 
