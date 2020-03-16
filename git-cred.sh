@@ -201,7 +201,7 @@ function fail_exit() {
     return
   fi
   
-  exit 1001
+  exit 71
 }
 
 function unknown_action_fail() {
@@ -216,7 +216,7 @@ function unknown_action_fail() {
     return
   fi
   
-  exit 1002
+  exit 72
 }
 
 function action_init() {
