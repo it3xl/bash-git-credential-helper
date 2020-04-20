@@ -1,3 +1,8 @@
+# Warning! This helper doesn't work starting from Git 2.26.1.
+
+# Fixing in progress
+
+
 # bash Git Credential Helper
 File [git-cred.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/git-cred.sh) implements
 * a custom Git Credential Helper that is, Git Credential Store.
