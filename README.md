@@ -1,4 +1,6 @@
-# Warning for users of Git 2.26.1 and later.
+# bash Git Credential Helper
+
+## Warning for users of Git 2.26.1 and later.
 
 The **bash Git Credential Helper** will stop to be invoked by Git in case if your repository URL has an additional folder part.  
 For example /my-proj/ in https://exaple.com/my-proj/my-repo.git
