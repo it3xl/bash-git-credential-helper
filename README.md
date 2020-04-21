@@ -1,12 +1,22 @@
 # Warning for users of Git 2.26.1 and later.
 
-The **bash Git Credential Helper** will stop to be invokated by Git in case if your repository URL has an additional folder part.  
+The **bash Git Credential Helper** will stop to be invoked by Git in case if your repository URL has an additional folder part.  
 For example /my-proj/ in https://exaple.com/my-proj/my-repo.git
 
 As workaround you can cut your URL to a root view in the Git config file.  
 For example, you have to use https://exaple.com/ instead of https://exaple.com/my-proj/my-repo.git
 
-# Fixing in progress
+I.e. replace 
+
+[credential "https://git.exaple.com/my-proj/my-repo.git"]
+    helper = !'/c/some-path/bash-git-credential-helper/git-cred.sh' provide  repo_b
+
+to
+
+[credential "https://git.exaple.com/"]
+    helper = !'/c/some-path/bash-git-credential-helper/git-cred.sh' provide  repo_b
+
+**Fixing of this trouble is in progress.**
 
 
 # bash Git Credential Helper
