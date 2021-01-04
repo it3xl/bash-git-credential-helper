@@ -3,7 +3,7 @@
 ## Warning for users of Git 2.26.1 and some following versions.
 
 Starrting from 2.26.1 version the Git has a bug that affects the **bash Git Credential Helper**.<br/>
-I reported this bug and it could be already fixed. I just goning to test is with some latest versions. 
+I reported this bug and it could be already fixed. I just goning to test it with some latest Git versions. 
 
 But if you use some buggy Git version then the **bash Git Credential Helper** will stop to be invoked by the Git in case if your repository URL has an additional folder part.  
 For example /my-proj/ in https://exaple.com/my-proj/my-repo.git
