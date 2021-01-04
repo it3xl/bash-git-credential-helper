@@ -93,8 +93,8 @@ See its code to get started.
 ## Warning for users of Git 2.26 version.
 
 Git of 2.26 version has a bug that affects the **bash Git Credential Helper**.<br/>
-I [reported this bug](https://www.spinics.net/lists/git/msg379664.html) and it is fixed. Just use the Git of another version.<br/>
-Probably, 2.25 also may have some troubles. But 2.24 works rigth.
+I [reported this bug](https://www.spinics.net/lists/git/msg379664.html) and it was fixed. Just use the Git of another version.<br/>
+Probably, 2.25 also may have some troubles. But 2.24 and 2.27 works rigth.
 
 If you forsed to use 2.26 Git version then use the following workaround.<br/>
 The **bash Git Credential Helper** will stop to be invoked by the Git in case if your repository URL has an additional folder part(s).  
