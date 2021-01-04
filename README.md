@@ -33,11 +33,11 @@ For a remote name (you can use any existing remote name)
 
 ### Instructions
 
-You always can run in a bash shell
+To see help run in bash
 
     source git-cred.sh  help
     
-Or in a Windows shell
+Or in Windows CMD
 
     bash git-cred.sh  help
 
