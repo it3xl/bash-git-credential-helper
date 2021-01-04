@@ -2,7 +2,7 @@
 
 ### Where I'm using it
 
-* Build-machines to run jobs using differenc accounts.
+* Build-machines to run jobs under differenc accounts.
 * Running scripts under different accounts.
 * Running from cron(s), at, PowerShell Scheduled Tasks and Jobs.
 
