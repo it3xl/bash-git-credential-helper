@@ -1,8 +1,15 @@
 # bash Git Credential Helper
 
-# bash Git Credential Helper
+### Where I'm using it
+
+* Build-machines to run jobs using differenc accounts.
+* Running scripts under different accounts.
+* Running from cron(s), at, PowerShell Scheduled Tasks and Jobs.
+
+### Main notes
+
 File [git-cred.sh](https://github.com/it3xl/bash-git-credential-helper/blob/master/git-cred.sh) implements
-* a custom Git Credential Helper that is, Git Credential Store.
+* a custom Git Credential Helper that is some Git Credential Store.
 * It catches user credentials from environment variables and puts them to Git as a custom Git Credential Helper.
 * It supports spaces in paths
 * Use Credentials Binding Plugin (or others) in Jenkins to obtain credentials and hide them from any logging.
