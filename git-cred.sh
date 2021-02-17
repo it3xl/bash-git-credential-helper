@@ -96,7 +96,7 @@ function set_password_var_name() {
 
 function check_has_password() {
   if [[ "${!password_var_name:-}" == "" ]]; then
-    echo @ Error. There is no data in '"'$login_var_name'"' env-variable.>&2
+    echo @ Error. There is no data in '"'$password_var_name'"' env-variable.>&2
     
     return 1
   fi
