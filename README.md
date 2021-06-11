@@ -2,9 +2,9 @@
 
 ### Where I'm using it
 
-* Build-machines to run jobs under differenc accounts.
+* Build-machines to run jobs under different accounts.
 * Running scripts under different accounts.
-* Running from cron(s), at, PowerShell Scheduled Tasks and Jobs.
+* Running from cron(s), at or PowerShell Scheduled Tasks and Jobs.
 
 ### Main notes
 
